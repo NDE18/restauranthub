@@ -1,0 +1,57 @@
+# ── Secrets & environnement ──────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ── Java / Maven (services Spring Boot) ──────────────
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+
+# ── Node.js (NestJS, Next.js) ────────────────────────
+node_modules/
+dist/
+.next/
+out/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── Python (FastAPI) ─────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+htmlcov/
+.coverage
+
+# ── IDE ──────────────────────────────────────────────
+.idea/
+.vscode/
+*.iml
+*.swp
+
+# ── OS ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Docker / build ───────────────────────────────────
+*.log
+coverage/
+
+# ── Claude Code (config locale) ─────────────────────
+.claude/settings.local.json
+.claude
+devops/
+docs/
+Cahier_des_charges_microservices_restaurant.docx
+plan.md
+objectif.txt

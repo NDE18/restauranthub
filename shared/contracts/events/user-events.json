@@ -1,0 +1,49 @@
+{
+  "namespace": "com.restaurant.events",
+  "topics": {
+    "user-events": {
+      "description": "Événements du domaine utilisateur",
+      "partitions": 3,
+      "retentionMs": 604800000,
+      "events": {
+        "user.created": {
+          "fields": {
+            "eventType": "string",
+            "userId": "uuid",
+            "email": "string",
+            "firstName": "string",
+            "lastName": "string",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-loyalty", "service-reservation", "service-notification", "service-analytics"]
+        },
+        "user.updated": {
+          "fields": {
+            "eventType": "string",
+            "userId": "uuid",
+            "email": "string",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-analytics"]
+        },
+        "user.deleted": {
+          "fields": {
+            "eventType": "string",
+            "userId": "uuid",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-loyalty", "service-notification", "service-analytics"]
+        },
+        "user.email-verified": {
+          "fields": {
+            "eventType": "string",
+            "userId": "uuid",
+            "email": "string",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-notification"]
+        }
+      }
+    }
+  }
+}

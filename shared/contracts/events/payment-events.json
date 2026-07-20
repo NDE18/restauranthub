@@ -1,0 +1,40 @@
+{
+  "topics": {
+    "payment-events": {
+      "events": {
+        "payment.succeeded": {
+          "fields": {
+            "eventType": "string",
+            "paymentId": "uuid",
+            "orderId": "uuid",
+            "userId": "uuid",
+            "amount": "decimal",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-order", "service-notification", "service-analytics"]
+        },
+        "payment.failed": {
+          "fields": {
+            "eventType": "string",
+            "paymentId": "uuid",
+            "orderId": "uuid",
+            "reason": "string",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-order", "service-notification"]
+        },
+        "payment.refunded": {
+          "fields": {
+            "eventType": "string",
+            "paymentId": "uuid",
+            "orderId": "uuid",
+            "userId": "uuid",
+            "amount": "decimal",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-order", "service-notification", "service-analytics"]
+        }
+      }
+    }
+  }
+}

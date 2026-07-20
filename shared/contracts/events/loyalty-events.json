@@ -1,0 +1,20 @@
+{
+  "topics": {
+    "loyalty-events": {
+      "events": {
+        "loyalty.points-credited": {
+          "fields": { "eventType": "string", "userId": "uuid", "points": "integer", "newBalance": "integer", "timestamp": "iso8601" },
+          "consumers": ["service-analytics"]
+        },
+        "loyalty.tier-upgraded": {
+          "fields": { "eventType": "string", "userId": "uuid", "oldTier": "string", "newTier": "string", "timestamp": "iso8601" },
+          "consumers": ["service-notification", "service-analytics"]
+        },
+        "loyalty.reward-redeemed": {
+          "fields": { "eventType": "string", "userId": "uuid", "rewardId": "uuid", "pointsUsed": "integer", "timestamp": "iso8601" },
+          "consumers": ["service-analytics"]
+        }
+      }
+    }
+  }
+}

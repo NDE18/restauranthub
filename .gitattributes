@@ -1,0 +1,14 @@
+# Normalisation des fins de ligne : LF dans le dépôt, indispensable pour
+# les scripts/Dockerfiles exécutés dans des conteneurs Linux.
+* text=auto eol=lf
+
+# Scripts Windows : CRLF requis
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binaires : pas de conversion
+*.png binary
+*.jpg binary
+*.ico binary
+*.docx binary
+*.jar binary

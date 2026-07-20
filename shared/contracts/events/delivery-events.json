@@ -1,0 +1,28 @@
+{
+  "topics": {
+    "delivery-events": {
+      "events": {
+        "delivery.created": {
+          "fields": { "eventType": "string", "deliveryId": "uuid", "orderId": "uuid", "timestamp": "iso8601" },
+          "consumers": ["service-notification", "service-analytics"]
+        },
+        "delivery.assigned": {
+          "fields": { "eventType": "string", "deliveryId": "uuid", "orderId": "uuid", "driverId": "uuid", "timestamp": "iso8601" },
+          "consumers": ["service-notification", "service-analytics"]
+        },
+        "delivery.picked-up": {
+          "fields": { "eventType": "string", "deliveryId": "uuid", "orderId": "uuid", "timestamp": "iso8601" },
+          "consumers": ["service-notification"]
+        },
+        "delivery.delivered": {
+          "fields": { "eventType": "string", "deliveryId": "uuid", "orderId": "uuid", "customerId": "uuid", "timestamp": "iso8601" },
+          "consumers": ["service-order", "service-loyalty", "service-notification", "service-analytics"]
+        },
+        "delivery.failed": {
+          "fields": { "eventType": "string", "deliveryId": "uuid", "orderId": "uuid", "reason": "string", "timestamp": "iso8601" },
+          "consumers": ["service-notification", "service-analytics"]
+        }
+      }
+    }
+  }
+}

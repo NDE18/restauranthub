@@ -1,0 +1,64 @@
+{
+  "namespace": "com.restaurant.events",
+  "topics": {
+    "order-events": {
+      "description": "Événements du domaine commande — orchestrateur de la Saga",
+      "partitions": 6,
+      "retentionMs": 604800000,
+      "events": {
+        "order.created": {
+          "fields": {
+            "eventType": "string",
+            "orderId": "uuid",
+            "userId": "uuid",
+            "restaurantId": "uuid",
+            "totalAmount": "decimal",
+            "type": "enum:CLICK_AND_COLLECT|DELIVERY|ON_SITE",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-payment", "service-notification", "service-analytics"]
+        },
+        "order.paid": {
+          "fields": {
+            "eventType": "string",
+            "orderId": "uuid",
+            "userId": "uuid",
+            "restaurantId": "uuid",
+            "paymentId": "uuid",
+            "type": "enum:CLICK_AND_COLLECT|DELIVERY|ON_SITE",
+            "deliveryAddress": "string",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-delivery", "service-loyalty", "service-notification", "service-analytics"]
+        },
+        "order.ready": {
+          "fields": {
+            "eventType": "string",
+            "orderId": "uuid",
+            "userId": "uuid",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-delivery", "service-notification"]
+        },
+        "order.completed": {
+          "fields": {
+            "eventType": "string",
+            "orderId": "uuid",
+            "userId": "uuid",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-analytics"]
+        },
+        "order.cancelled": {
+          "fields": {
+            "eventType": "string",
+            "orderId": "uuid",
+            "userId": "uuid",
+            "timestamp": "iso8601"
+          },
+          "consumers": ["service-payment", "service-delivery", "service-notification", "service-analytics"]
+        }
+      }
+    }
+  }
+}
