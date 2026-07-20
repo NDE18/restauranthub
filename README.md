@@ -688,7 +688,7 @@ uvicorn app.main:app --reload --port 8008
 cd frontend
 npm install
 cp .env.local.example .env.local
-# Éditer .env.local
+# Éditer .env.locals
 npm run dev
 # http://localhost:3000
 ```
