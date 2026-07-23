@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.git
+.gitignore
+*.md
+.env
+.env.*
+coverage/
+.nyc_output/
+test/
+Dockerfile
+docker-compose*
+.eslintrc*
+.prettierrc*
+tsconfig.build.json

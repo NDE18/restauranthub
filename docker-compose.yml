@@ -1,0 +1,777 @@
+# =============================================================================
+# RestaurantHub — Docker Compose
+# =============================================================================
+# Usage :
+#   docker compose up -d                         → infra + services de base
+#   docker compose --profile frontend up -d      → + frontend + gateway
+#   docker compose --profile full up -d          → stack complète
+#
+# Arrêt :
+#   docker compose down                          → arrête (garde les données)
+#   docker compose down -v                       → arrête + supprime les volumes
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# RÉSEAUX
+# ---------------------------------------------------------------------------
+networks:
+  frontend-net:
+    driver: bridge
+  backend-net:
+    driver: bridge
+  data-net:
+    driver: bridge
+
+# ---------------------------------------------------------------------------
+# VOLUMES PERSISTANTS
+# ---------------------------------------------------------------------------
+volumes:
+  postgres-user-data:
+  postgres-restaurant-data:
+  postgres-reservation-data:
+  postgres-order-data:
+  postgres-payment-data:
+  postgres-loyalty-data:
+  postgres-delivery-data:
+  postgres-analytics-data:
+  mongo-menu-data:
+  mongo-notification-data:
+  redis-data:
+  kafka-data:
+  zookeeper-data:
+  keycloak-data:
+  meilisearch-data:
+
+# =============================================================================
+# SERVICES
+# =============================================================================
+services:
+
+  # ===========================================================================
+  # INFRASTRUCTURE — Bases de données
+  # ===========================================================================
+
+  # --- PostgreSQL : service-user (port 5432) ---------------------------------
+  postgres-user:
+    image: postgres:15-alpine
+    container_name: restaurant-postgres-user
+    environment:
+      POSTGRES_DB: ${POSTGRES_USER_DB:-user_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-user-data:/var/lib/postgresql/data
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_USER_DB:-user_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # --- PostgreSQL : service-restaurant (port 5433) ---------------------------
+  postgres-restaurant:
+    image: postgres:15-alpine
+    container_name: restaurant-postgres-restaurant
+    environment:
+      POSTGRES_DB: ${POSTGRES_RESTAURANT_DB:-restaurant_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-restaurant-data:/var/lib/postgresql/data
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_RESTAURANT_DB:-restaurant_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # --- PostgreSQL : service-reservation (port 5434) --------------------------
+  postgres-reservation:
+    image: postgres:15-alpine
+    container_name: restaurant-postgres-reservation
+    environment:
+      POSTGRES_DB: ${POSTGRES_RESERVATION_DB:-reservation_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-reservation-data:/var/lib/postgresql/data
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_RESERVATION_DB:-reservation_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # --- PostgreSQL : service-order (port 5435) --------------------------------
+  postgres-order:
+    image: postgres:15-alpine
+    container_name: restaurant-postgres-order
+    environment:
+      POSTGRES_DB: ${POSTGRES_ORDER_DB:-order_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres-order-data:/var/lib/postgresql/data
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_ORDER_DB:-order_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # --- PostgreSQL : service-payment (port 5436) ------------------------------
+  postgres-payment:
+    image: postgres:15-alpine
+    container_name: restaurant-postgres-payment
+    environment:
+      POSTGRES_DB: ${POSTGRES_PAYMENT_DB:-payment_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres-payment-data:/var/lib/postgresql/data
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_PAYMENT_DB:-payment_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # --- PostgreSQL : service-loyalty (port 5437) ------------------------------
+  postgres-loyalty:
+    image: postgres:15-alpine
+    container_name: restaurant-postgres-loyalty
+    environment:
+      POSTGRES_DB: ${POSTGRES_LOYALTY_DB:-loyalty_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5437:5432"
+    volumes:
+      - postgres-loyalty-data:/var/lib/postgresql/data
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_LOYALTY_DB:-loyalty_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # --- PostgreSQL : service-delivery (port 5438) -----------------------------
+  postgres-delivery:
+    image: postgres:15-alpine
+    container_name: restaurant-postgres-delivery
+    environment:
+      POSTGRES_DB: ${POSTGRES_DELIVERY_DB:-delivery_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5438:5432"
+    volumes:
+      - postgres-delivery-data:/var/lib/postgresql/data
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DELIVERY_DB:-delivery_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # --- PostgreSQL : service-analytics (port 5439) ----------------------------
+  postgres-analytics:
+    image: postgres:15-alpine
+    container_name: restaurant-postgres-analytics
+    environment:
+      POSTGRES_DB: ${POSTGRES_ANALYTICS_DB:-analytics_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5439:5432"
+    volumes:
+      - postgres-analytics-data:/var/lib/postgresql/data
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_ANALYTICS_DB:-analytics_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    profiles: ["full"]
+    restart: unless-stopped
+
+  # --- MongoDB : service-menu (port 27017) -----------------------------------
+  mongo-menu:
+    image: mongo:7
+    container_name: restaurant-mongo-menu
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-mongo}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-mongo}
+      MONGO_INITDB_DATABASE: menu_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-menu-data:/data/db
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  # --- MongoDB : service-notification (port 27018) ---------------------------
+  mongo-notification:
+    image: mongo:7
+    container_name: restaurant-mongo-notification
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-mongo}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-mongo}
+      MONGO_INITDB_DATABASE: notification_db
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-notification-data:/data/db
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    profiles: ["full"]
+    restart: unless-stopped
+
+  # ===========================================================================
+  # INFRASTRUCTURE — Services de support
+  # ===========================================================================
+
+  # --- Zookeeper (coordination Kafka) ----------------------------------------
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: restaurant-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+    networks:
+      - backend-net
+    healthcheck:
+      test: ["CMD-SHELL", "echo ruok | nc localhost 2181 | grep imok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  # --- Apache Kafka ----------------------------------------------------------
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: restaurant-kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    networks:
+      - backend-net
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # --- Schema Registry -------------------------------------------------------
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.6.0
+    container_name: restaurant-schema-registry
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:29092
+    ports:
+      - "8081:8081"
+    networks:
+      - backend-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  # --- Kafdrop (UI Kafka) ----------------------------------------------------
+  kafdrop:
+    image: obsidiandynamics/kafdrop:4.0.2
+    container_name: restaurant-kafdrop
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKERCONNECT: kafka:29092
+      JVM_OPTS: "-Xms32M -Xmx128M"
+      SCHEMAREGISTRY_CONNECT: http://schema-registry:8081
+    ports:
+      - "9000:9000"
+    networks:
+      - backend-net
+    restart: unless-stopped
+
+  # --- Redis -----------------------------------------------------------------
+  redis:
+    image: redis:7.2-alpine
+    container_name: restaurant-redis
+    command: redis-server --requirepass ${REDIS_PASSWORD:-redis_secret} --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - backend-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_secret}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+
+  # --- Keycloak (IAM) --------------------------------------------------------
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: restaurant-keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-keycloak:5432/keycloak_db
+      KC_DB_USERNAME: ${POSTGRES_USER:-postgres}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    ports:
+      - "8080:8080"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      postgres-keycloak:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # --- PostgreSQL pour Keycloak -----------------------------------------------
+  postgres-keycloak:
+    image: postgres:15-alpine
+    container_name: restaurant-postgres-keycloak
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - keycloak-data:/var/lib/postgresql/data
+    networks:
+      - data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d keycloak_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # --- Meilisearch (recherche full-text) --------------------------------------
+  meilisearch:
+    image: getmeili/meilisearch:v1.8
+    container_name: restaurant-meilisearch
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_KEY:-masterKey_dev_only}
+      MEILI_ENV: development
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilisearch-data:/meili_data
+    networks:
+      - backend-net
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7700/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # ===========================================================================
+  # SERVICES APPLICATIFS — Slice 1 (base)
+  # ===========================================================================
+
+  service-user:
+    build:
+      context: ./services/service-user
+      dockerfile: Dockerfile
+    container_name: restaurant-service-user
+    environment:
+      DB_HOST: postgres-user
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_USER_DB:-user_db}
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+      KEYCLOAK_ISSUER_URI: http://keycloak:8080/realms/restaurant
+      SERVER_PORT: 8001
+    ports:
+      - "8001:8001"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      postgres-user:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ===========================================================================
+  # SERVICES APPLICATIFS — Slice 2 (frontend)
+  # ===========================================================================
+
+  service-restaurant:
+    build:
+      context: ./services/service-restaurant
+      dockerfile: Dockerfile
+    container_name: restaurant-service-restaurant
+    environment:
+      DB_HOST: postgres-restaurant
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_RESTAURANT_DB:-restaurant_db}
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+      KEYCLOAK_ISSUER_URI: http://keycloak:8080/realms/restaurant
+      SERVER_PORT: 8002
+    ports:
+      - "8002:8002"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      postgres-restaurant:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    profiles: ["frontend", "full"]
+    restart: unless-stopped
+
+  service-menu:
+    build:
+      context: ./services/service-menu
+      dockerfile: Dockerfile
+    container_name: restaurant-service-menu
+    environment:
+      MONGO_URI: mongodb://${MONGO_USER:-mongo}:${MONGO_PASSWORD:-mongo}@mongo-menu:27017/menu_db?authSource=admin
+      KAFKA_BROKERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+      PORT: 3000
+    ports:
+      - "8003:3000"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      mongo-menu:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    profiles: ["frontend", "full"]
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: restaurant-frontend
+    environment:
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-dev-secret-change-in-production}
+      NEXT_PUBLIC_API_URL: http://gateway:80
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend-net
+      - backend-net
+    profiles: ["frontend", "full"]
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: ./gateway/nginx
+      dockerfile: Dockerfile
+    container_name: restaurant-gateway
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - frontend-net
+      - backend-net
+    depends_on:
+      - service-user
+    profiles: ["frontend", "full"]
+    restart: unless-stopped
+
+  # ===========================================================================
+  # SERVICES APPLICATIFS — Slice 3 (full)
+  # ===========================================================================
+
+  service-reservation:
+    build:
+      context: ./services/service-reservation
+      dockerfile: Dockerfile
+    container_name: restaurant-service-reservation
+    environment:
+      DB_HOST: postgres-reservation
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_RESERVATION_DB:-reservation_db}
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+      KEYCLOAK_ISSUER_URI: http://keycloak:8080/realms/restaurant
+      SERVER_PORT: 8004
+    ports:
+      - "8004:8004"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      postgres-reservation:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    profiles: ["full"]
+    restart: unless-stopped
+
+  service-order:
+    build:
+      context: ./services/service-order
+      dockerfile: Dockerfile
+    container_name: restaurant-service-order
+    environment:
+      DB_HOST: postgres-order
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_ORDER_DB:-order_db}
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+      KEYCLOAK_ISSUER_URI: http://keycloak:8080/realms/restaurant
+      SERVER_PORT: 8005
+    ports:
+      - "8005:8005"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      postgres-order:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    profiles: ["full"]
+    restart: unless-stopped
+
+  service-payment:
+    build:
+      context: ./services/service-payment
+      dockerfile: Dockerfile
+    container_name: restaurant-service-payment
+    environment:
+      DB_HOST: postgres-payment
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_PAYMENT_DB:-payment_db}
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+      KEYCLOAK_ISSUER_URI: http://keycloak:8080/realms/restaurant
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_placeholder}
+      SERVER_PORT: 8006
+    ports:
+      - "8006:8006"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      postgres-payment:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    profiles: ["full"]
+    restart: unless-stopped
+
+  service-delivery:
+    build:
+      context: ./services/service-delivery
+      dockerfile: Dockerfile
+    container_name: restaurant-service-delivery
+    environment:
+      DB_HOST: postgres-delivery
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DELIVERY_DB:-delivery_db}
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KAFKA_BROKERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+      PORT: 3000
+    ports:
+      - "8007:3000"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      postgres-delivery:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    profiles: ["full"]
+    restart: unless-stopped
+
+  service-notification:
+    build:
+      context: ./services/service-notification
+      dockerfile: Dockerfile
+    container_name: restaurant-service-notification
+    environment:
+      MONGO_URI: mongodb://${MONGO_USER:-mongo}:${MONGO_PASSWORD:-mongo}@mongo-notification:27017/notification_db?authSource=admin
+      KAFKA_BROKERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY:-placeholder}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-placeholder}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-placeholder}
+      PORT: 3000
+    ports:
+      - "8009:3000"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      mongo-notification:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    profiles: ["full"]
+    restart: unless-stopped
+
+  service-loyalty:
+    build:
+      context: ./services/service-loyalty
+      dockerfile: Dockerfile
+    container_name: restaurant-service-loyalty
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres-loyalty:5432/${POSTGRES_LOYALTY_DB:-loyalty_db}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+    ports:
+      - "8008:8000"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      postgres-loyalty:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    profiles: ["full"]
+    restart: unless-stopped
+
+  service-analytics:
+    build:
+      context: ./services/service-analytics
+      dockerfile: Dockerfile
+    container_name: restaurant-service-analytics
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres-analytics:5432/${POSTGRES_ANALYTICS_DB:-analytics_db}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+    ports:
+      - "8010:8000"
+    networks:
+      - backend-net
+      - data-net
+    depends_on:
+      postgres-analytics:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    profiles: ["full"]
+    restart: unless-stopped
