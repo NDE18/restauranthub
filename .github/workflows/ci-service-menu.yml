@@ -1,4 +1,4 @@
-name: CI — service-menu
+name: CI - service-menu
 
 on:
   push:

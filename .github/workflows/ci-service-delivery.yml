@@ -1,4 +1,4 @@
-name: CI — ci-service-delivery
+name: CI - ci-service-delivery
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: CI — service-loyalty
+name: CI - service-loyalty
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: CI — ci-service-notification
+name: CI - ci-service-notification
 
 on:
   push:
