@@ -1,4 +1,4 @@
-name: CI — ci-service-analytics
+name: CI - ci-service-analytics
 
 on:
   push:

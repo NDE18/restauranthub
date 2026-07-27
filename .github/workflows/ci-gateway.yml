@@ -1,4 +1,4 @@
-name: CI — gateway
+name: CI - gateway
 
 on:
   push:
