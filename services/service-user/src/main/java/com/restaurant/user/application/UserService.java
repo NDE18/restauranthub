@@ -109,10 +109,10 @@ public class UserService {
     }
 
     public void enable2FA(String keycloakId) {
-        User user = userRepository.findByKeycloakId(keycloakId)
+        User u = userRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new UserNotFoundException("keycloakId=" + keycloakId));
-        user.setTwoFaEnabled(true);
-        userRepository.save(user);
+        u.setTwoFaEnabled(true);
+        userRepository.save(u);
     }
 
     private UserResponse toResponse(User user) {
