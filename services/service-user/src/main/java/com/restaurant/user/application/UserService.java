@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
+@Data
 public class UserService {
 
     private final UserRepository userRepository;
