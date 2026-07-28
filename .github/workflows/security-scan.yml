@@ -45,7 +45,7 @@ jobs:
       - name: Run Trivy on ${{ matrix.service }}
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: ghcr.io/${{ github.repository }}/${{ matrix.service }}:latest
+          image-ref: ghcr.io/nde18/restauranthub/${{ matrix.service }}:latest
           format: 'sarif'
           output: 'trivy-${{ matrix.service }}.sarif'
           severity: 'CRITICAL,HIGH'

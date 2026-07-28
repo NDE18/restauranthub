@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/ci-service-delivery
+  IMAGE_NAME: nde18/restauranthub/ci-service-delivery
   NODE_VERSION: '20'
   SERVICE_PATH: services/ci-service-delivery
 
