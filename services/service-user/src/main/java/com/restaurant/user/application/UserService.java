@@ -131,4 +131,8 @@ public class UserService {
                 .createdAt(user.getCreatedAt())
                 .build();
     }
+
+    public void toCheck(){
+        log.info("New update");
+    }
 }
