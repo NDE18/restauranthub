@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/service-loyalty
+  IMAGE_NAME: nde18/restauranthub/service-loyalty
   PYTHON_VERSION: '3.12'
   SERVICE_PATH: services/service-loyalty
 

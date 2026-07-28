@@ -16,7 +16,7 @@ on:
   
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/service-restaurant
+  IMAGE_NAME: nde18/restauranthub/service-restaurant
   JAVA_VERSION: '21'
   SERVICE_PATH: services/service-restaurant
 

@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/gateway
+  IMAGE_NAME: nde18/restauranthub/gateway
   SERVICE_PATH: gateway/nginx
 
 permissions:
