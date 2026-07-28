@@ -134,5 +134,6 @@ public class UserService {
 
     public void toCheck(){
         log.info("New update");
+        log.info("Update saved");
     }
 }
