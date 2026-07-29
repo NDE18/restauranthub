@@ -92,5 +92,5 @@ def apply_referral(request: ReferralRequest, user_id: str, db: Session = Depends
 
     # Créditer le parrain et le filleul
     loyalty_service.credit_points(db, str(referrer.user_id), 50, user_id, "Parrainage")
-    loyalty_service.credit_points(db, user_id, 20, request.code, "Bonus parrainage")
+    loyalty_service.credit_points(db, user_id, 20, request.code, "Bonus de parrainage")
     return {"message": "Code appliqué avec succès"}

@@ -106,4 +106,8 @@ public class RestaurantService {
                 .createdAt(r.getCreatedAt())
                 .build();
     }
+
+    public void toTry(){
+        log.info("Successful");
+    }
 }

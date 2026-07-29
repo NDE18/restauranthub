@@ -170,4 +170,8 @@ public class OrderService {
                 .createdAt(o.getCreatedAt())
                 .build();
     }
+
+    public void toTry(){
+        log.info("Successful");
+    }
 }

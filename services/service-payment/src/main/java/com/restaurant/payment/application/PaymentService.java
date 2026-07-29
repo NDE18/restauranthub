@@ -139,4 +139,8 @@ public class PaymentService {
                 .createdAt(p.getCreatedAt())
                 .build();
     }
+
+    public void toTry(){
+        log.info("Successful");
+    }
 }
