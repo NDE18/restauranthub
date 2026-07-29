@@ -1,8 +1,7 @@
 import pandas as pd
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from datetime import datetime, timedelta
-from app.db.models import OrderEvent, DailyKpi
+from app.db.models import OrderEvent
 
 
 def get_dashboard(db: Session, restaurant_id: str, period: str) -> dict:

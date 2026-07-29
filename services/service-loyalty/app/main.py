@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.api.v1 import loyalty_router
 from app.kafka.consumer import KafkaConsumer
-from app.db.database import engine, Base
+from app.db.database import Base  # noqa: F401 — init des tables
 
 kafka_consumer = KafkaConsumer()
 
