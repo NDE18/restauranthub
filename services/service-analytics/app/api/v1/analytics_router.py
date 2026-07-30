@@ -38,4 +38,4 @@ def get_recommendations(userId: str, db: Session = Depends(get_db)):
 @router.post("/reports/export")
 def export_report(restaurantId: str, format: str = "pdf"):
     """Export des rapports format PDF ou Excel."""
-    return {"message": f"Export {format} lancé pour {restaurantId}", "status": "queued"}
+    return {"message": f"Export {format} lancé pour le restaurant {restaurantId}", "status": "queued"}

@@ -9,7 +9,7 @@ export class NotificationController {
 
   @Post('send')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Envoi direct (admin)' })
+  @ApiOperation({ summary: 'Envoi (admin)' })
   send(@Body() dto: SendNotificationDto) {
     return this.notificationService.send(dto);
   }

@@ -28,7 +28,7 @@ public class PaymentController {
 
     @PostMapping("/intent")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Créer un PaymentIntent Stripe")
+    @Operation(summary = "Effectuer un PaymentIntent Stripe")
     public PaymentResponse createIntent(@Valid @RequestBody CreatePaymentIntentRequest request,
                                          @AuthenticationPrincipal Jwt jwt) {
         return paymentService.createIntent(request, UUID.fromString(jwt.getSubject()));

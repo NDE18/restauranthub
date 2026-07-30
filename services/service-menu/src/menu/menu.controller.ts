@@ -23,7 +23,7 @@ export class MenuController {
   }
 
   @Get(':restaurantId/items')
-  @ApiOperation({ summary: 'Recherche filtrée (catégorie, tags)' })
+  @ApiOperation({ summary: 'Recherche filtrée par (catégorie, tags)' })
   findFiltered(
     @Param('restaurantId') restaurantId: string,
     @Query('category') category?: string,

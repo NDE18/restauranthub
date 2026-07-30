@@ -30,7 +30,7 @@ export class DeliveryService {
 
   async findById(id: string): Promise<Delivery> {
     const d = await this.deliveryRepo.findOne({ where: { id } });
-    if (!d) throw new NotFoundException(`Livraison introuvable : ${id}`);
+    if (!d) throw new NotFoundException(`Livraison introuvable - : ${id}`);
     return d;
   }
 
