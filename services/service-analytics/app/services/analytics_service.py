@@ -1,6 +1,8 @@
+from datetime import datetime, timedelta
+
 import pandas as pd
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+
 from app.db.models import OrderEvent
 
 
@@ -55,7 +57,9 @@ def get_sales_analysis(db: Session, restaurant_id: str) -> dict:
     if not events:
         return {"restaurantId": restaurant_id, "sales": []}
 
-    df = pd.DataFrame([{"amount": e.total_amount or 0, "type": e.order_type} for e in events])
+    df = pd.DataFrame(
+        [{"amount": e.total_amount or 0, "type": e.order_type} for e in events],
+    )
     by_type = df.groupby("type")["amount"].agg(["count", "sum"]).reset_index()
 
     return {
@@ -66,7 +70,7 @@ def get_sales_analysis(db: Session, restaurant_id: str) -> dict:
 
 
 def get_recommendations(db: Session, user_id: str) -> list:
-    """Recommandations de plats basées sur l'historique (collaborative filtering simplifié)."""
+    """Recommandations basées sur l'historique (collaborative filtering)."""
     # Placeholder — en production : sklearn CollaborativeFilter
     return [
         {"itemId": "item_001", "name": "Burger Artisanal", "score": 0.92},

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.db.models import LoyaltyAccount, Reward
@@ -81,7 +81,9 @@ def generate_referral(user_id: str, db: Session = Depends(get_db)):
 
 
 @router.post("/referral/apply")
-def apply_referral(request: ReferralRequest, user_id: str, db: Session = Depends(get_db)):
+def apply_referral(
+    request: ReferralRequest, user_id: str, db: Session = Depends(get_db),
+):
     """Appliquer un code de parrainage."""
     referrer = db.query(LoyaltyAccount).filter_by(referral_code=request.code).first()
     if not referrer:

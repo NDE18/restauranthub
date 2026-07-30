@@ -1,9 +1,10 @@
-from sqlalchemy import Column, String, Integer, Boolean, DateTime, Enum, ForeignKey
+import enum
+import uuid
+from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, relationship
-from datetime import datetime
-import uuid
-import enum
 
 
 class Base(DeclarativeBase):
@@ -33,7 +34,9 @@ class LoyaltyAccount(Base):
     tier = Column(Enum(LoyaltyTier), nullable=False, default=LoyaltyTier.BRONZE)
     referral_code = Column(String(20), unique=True)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(
+        DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow,
+    )
 
     transactions = relationship("PointTransaction", back_populates="account")
 
@@ -42,7 +45,10 @@ class PointTransaction(Base):
     __tablename__ = "point_transactions"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    account_id = Column(UUID(as_uuid=True), ForeignKey("loyalty_accounts.id"), nullable=False, index=True)
+    account_id = Column(
+        UUID(as_uuid=True), ForeignKey("loyalty_accounts.id"),
+        nullable=False, index=True,
+    )
     type = Column(Enum(TransactionType), nullable=False)
     points = Column(Integer, nullable=False)
     description = Column(String(255))

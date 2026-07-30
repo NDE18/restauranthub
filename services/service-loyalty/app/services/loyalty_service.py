@@ -1,9 +1,16 @@
 import random
 import string
-from sqlalchemy.orm import Session
-from app.db.models import LoyaltyAccount, PointTransaction, TransactionType, LoyaltyTier, Reward
-from app.config import settings
 
+from sqlalchemy.orm import Session
+
+from app.config import settings
+from app.db.models import (
+    LoyaltyAccount,
+    LoyaltyTier,
+    PointTransaction,
+    Reward,
+    TransactionType,
+)
 
 TIER_THRESHOLDS = {
     LoyaltyTier.BRONZE: 0,
@@ -26,7 +33,9 @@ def get_or_create_account(db: Session, user_id: str) -> LoyaltyAccount:
     return account
 
 
-def credit_points(db: Session, user_id: str, amount: float, reference_id: str, description: str) -> dict:
+def credit_points(
+    db: Session, user_id: str, amount: float, reference_id: str, description: str,
+) -> dict:
     account = get_or_create_account(db, user_id)
     points = int(amount * settings.points_per_euro)
 
@@ -50,7 +59,10 @@ def credit_points(db: Session, user_id: str, amount: float, reference_id: str, d
         account.tier = new_tier
 
     db.commit()
-    return {"pointsCredited": points, "newBalance": account.points_balance, "tierUpgraded": tier_upgraded, "newTier": account.tier}
+    return {
+        "pointsCredited": points, "newBalance": account.points_balance,
+        "tierUpgraded": tier_upgraded, "newTier": account.tier,
+    }
 
 
 def redeem_reward(db: Session, user_id: str, reward_id: str) -> dict:
@@ -79,7 +91,10 @@ def redeem_reward(db: Session, user_id: str, reward_id: str) -> dict:
         reward.stock -= 1
 
     db.commit()
-    return {"rewardName": reward.name, "pointsUsed": reward.points_cost, "newBalance": account.points_balance}
+    return {
+        "rewardName": reward.name, "pointsUsed": reward.points_cost,
+        "newBalance": account.points_balance,
+    }
 
 
 def get_transactions(db: Session, user_id: str) -> list:
