@@ -49,7 +49,7 @@ public class ReservationController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Modifier une réservation")
+    @Operation(summary = "Editer une réservation")
     public ReservationResponse update(@PathVariable UUID id,
                                        @RequestBody CreateReservationRequest request) {
         return reservationService.update(id, request);

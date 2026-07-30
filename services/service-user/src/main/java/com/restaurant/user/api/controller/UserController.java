@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PatchMapping("/me")
-    @Operation(summary = "Mettre à jour le profil")
+    @Operation(summary = "Update le profil")
     public UserResponse updateMe(@AuthenticationPrincipal Jwt jwt,
                                   @RequestBody UpdateProfileRequest request) {
         return userService.updateProfile(jwt.getSubject(), request);

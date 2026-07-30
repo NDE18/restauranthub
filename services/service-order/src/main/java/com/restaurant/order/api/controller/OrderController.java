@@ -26,7 +26,7 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Créer une commande (idempotente)")
+    @Operation(summary = "Enregistrer une commande (idempotente)")
     public OrderResponse create(@Valid @RequestBody CreateOrderRequest request,
                                  @AuthenticationPrincipal Jwt jwt) {
         return orderService.create(request, UUID.fromString(jwt.getSubject()));

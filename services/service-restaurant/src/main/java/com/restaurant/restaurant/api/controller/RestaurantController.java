@@ -55,7 +55,7 @@ public class RestaurantController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Création d'un établissement (admin)")
+    @Operation(summary = "Enregistrement d'un établissement (admin)")
     public RestaurantResponse create(@Valid @RequestBody CreateRestaurantRequest request) {
         return restaurantService.create(request);
     }
