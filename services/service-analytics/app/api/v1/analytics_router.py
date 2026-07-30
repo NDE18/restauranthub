@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
+
 from app.db.database import get_db
 from app.services import analytics_service
 
@@ -36,5 +37,5 @@ def get_recommendations(userId: str, db: Session = Depends(get_db)):
 
 @router.post("/reports/export")
 def export_report(restaurantId: str, format: str = "pdf"):
-    """Export PDF ou Excel des rapports."""
+    """Export des rapports format PDF ou Excel."""
     return {"message": f"Export {format} lancé pour {restaurantId}", "status": "queued"}

@@ -24,7 +24,7 @@ export class MenuService {
     category?: string,
     tags?: string[],
   ): Promise<MenuItem[]> {
-    const filter: any = { restaurantId };
+    const filter: Record<string, unknown> = { restaurantId };
     if (category) filter.categoryId = category;
     if (tags?.length) filter.tags = { $in: tags };
     return this.menuItemModel.find(filter).sort({ sortOrder: 1 }).exec();

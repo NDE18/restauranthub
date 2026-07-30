@@ -50,7 +50,7 @@ jobs:
         run: ruff check app/
 
       - name: Tests
-        run: pytest --tb=short -q
+        run: PYTHONPATH=. pytest --tb=short -q
 
       - name: Upload test results
         if: always()

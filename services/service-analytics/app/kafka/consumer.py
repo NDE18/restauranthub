@@ -1,7 +1,9 @@
-import json
 import asyncio
+import json
 import logging
+
 from aiokafka import AIOKafkaConsumer
+
 from app.config import settings
 from app.db.database import SessionLocal
 from app.db.models import OrderEvent, ReservationEvent
@@ -41,7 +43,7 @@ class AnalyticsKafkaConsumer:
         try:
             async for msg in self.consumer:
                 await self._handle(msg.value)
-        except Exception as e:
+        except (ConnectionError, OSError) as e:
             logger.error(f"Erreur consumer analytics : {e}")
 
     async def _handle(self, event: dict):
@@ -70,7 +72,7 @@ class AnalyticsKafkaConsumer:
                 ))
                 db.commit()
 
-        except Exception as e:
+        except (KeyError, ValueError) as e:
             db.rollback()
             logger.error(f"Erreur stockage événement analytics : {e}")
         finally:

@@ -26,14 +26,14 @@ export class MenuKafkaConsumer implements OnModuleInit, OnModuleDestroy {
     });
 
     await this.consumer.run({
-      eachMessage: async ({ topic, message }) => {
+      eachMessage: async ({ message }) => {
         const event = JSON.parse(message.value?.toString() || '{}');
         await this.handleEvent(event);
       },
     });
   }
 
-  private async handleEvent(event: any) {
+  private async handleEvent(event: Record<string, string>) {
     switch (event.eventType) {
       case 'restaurant.created':
         // Menu vide initialisé automatiquement — rien à faire, le menu est créé à la demande
