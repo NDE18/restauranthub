@@ -12,4 +12,3 @@ Dockerfile
 docker-compose*
 .eslintrc*
 .prettierrc*
-tsconfig.build.json
