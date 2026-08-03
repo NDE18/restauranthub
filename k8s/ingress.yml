@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: restaurant-ingress
+  namespace: restaurant
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: restaurant.local
+      http:
+        paths:
+          # ── API routes ──────────────────────────────────────
+          - path: /api/v1/auth
+            pathType: Prefix
+            backend:
+              service:
+                name: service-user
+                port:
+                  number: 8080
+          - path: /api/v1/users
+            pathType: Prefix
+            backend:
+              service:
+                name: service-user
+                port:
+                  number: 8080
+          - path: /api/v1/menus
+            pathType: Prefix
+            backend:
+              service:
+                name: service-menu
+                port:
+                  number: 3000
+          - path: /api/v1/loyalty
+            pathType: Prefix
+            backend:
+              service:
+                name: service-loyalty
+                port:
+                  number: 8000
+          # ── Frontend (catch-all, doit etre dernier) ─────────
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
