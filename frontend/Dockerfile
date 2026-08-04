@@ -19,6 +19,7 @@ COPY --from=deps /build/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
+RUN mkdir -p public
 RUN npm run build
 
 # ============================================================
