@@ -24,8 +24,8 @@ spec:
     spec:
       containers:
         - name: service-user
-          image: service-user:latest
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/nde18/restauranthub/service-user:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
               name: http
