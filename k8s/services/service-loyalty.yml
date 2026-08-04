@@ -105,8 +105,8 @@ spec:
     spec:
       containers:
         - name: service-loyalty
-          image: service-loyalty:latest
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/nde18/restauranthub/service-menu:sha-2e656ca
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
               name: http
