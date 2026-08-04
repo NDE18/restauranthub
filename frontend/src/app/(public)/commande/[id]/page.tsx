@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
+import { use, useEffect, useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -40,8 +40,26 @@ export default function OrderTrackingPage({ params }: { params: Promise<{ id: st
   const { id } = use(params)
   const [order] = useState(MOCK_ORDER)
   const [driverPosition, setDriverPosition] = useState<{ lat: number; lng: number } | null>(null)
-  const { location, status: deliveryStatus } = useDeliverySocket(
-    order.orderType === 'DELIVERY' ? id : null
+  // 1. Déclarer les états pour stocker la position et le statut
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [deliveryStatus, setDeliveryStatus] = useState<string | null>(null)
+
+  // 2. Préparer l'ID de livraison
+  const deliveryId = order.orderType === 'DELIVERY' ? id : null
+
+  // 3. Appeler le hook avec les 3 arguments requis (ID + 2 callbacks stabilisés avec useCallback)
+  const handleLocation = useCallback((lat: number, lng: number) => {
+    setLocation({ lat, lng })
+  }, [])
+
+  const handleStatus = useCallback((status: string) => {
+    setDeliveryStatus(status)
+  }, [])
+
+  useDeliverySocket(
+    deliveryId ?? '', 
+    handleLocation,
+    handleStatus
   )
 
   useEffect(() => {

@@ -1,0 +1,170 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-loyalty-config
+  namespace: restaurant
+data:
+  DB_NAME: loyalty_db
+---
+# PostgreSQL pour service-loyalty
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-loyalty
+  namespace: restaurant
+spec:
+  clusterIP: None
+  selector:
+    app: postgres-loyalty
+  ports:
+    - port: 5432
+      name: postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-loyalty
+  namespace: restaurant
+spec:
+  serviceName: postgres-loyalty
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-loyalty
+  template:
+    metadata:
+      labels:
+        app: postgres-loyalty
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: loyalty_db
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            periodSeconds: 10
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+# service-loyalty Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-loyalty
+  namespace: restaurant
+  labels:
+    app: service-loyalty
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service-loyalty
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: service-loyalty
+        version: v1
+    spec:
+      containers:
+        - name: service-loyalty
+          image: service-loyalty:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: common-config
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://$(DB_USER):$(DB_PASS)@postgres-loyalty:5432/loyalty_db"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: username
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-credentials
+                  key: password
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            failureThreshold: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-loyalty
+  namespace: restaurant
+spec:
+  selector:
+    app: service-loyalty
+  ports:
+    - port: 8000
+      targetPort: http
+      name: http
