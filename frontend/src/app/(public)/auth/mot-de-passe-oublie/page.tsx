@@ -40,7 +40,9 @@ export default function ForgotPasswordPage() {
               Si un compte existe avec <strong>{email}</strong>, vous recevrez un email de réinitialisation dans quelques minutes.
             </p>
             <Button asChild variant="outline" className="gap-2">
-              <Link href="/auth/connexion"><ArrowLeft className="h-4 w-4" /> Retour à la connexion</Link>
+              <Link href="/auth/connexion">
+                <ArrowLeft className="h-4 w-4" /> Retour à la connexion
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -68,7 +70,8 @@ export default function ForgotPasswordPage() {
             <div className="space-y-2">
               <Label htmlFor="email">Adresse email</Label>
               <Input
-                id="email" type="email"
+                id="email"
+                type="email"
                 placeholder="jean.dupont@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -80,7 +83,7 @@ export default function ForgotPasswordPage() {
             </Button>
           </form>
           <div className="mt-6 text-center">
-            <Link href="/auth/connexion" className="text-sm text-orange-500 hover:underline flex items-center justify-center gap-1">
+            <Link href="/auth/connexion" className="text-sm text-orange-500 hover:underline inline-flex items-center justify-center gap-1">
               <ArrowLeft className="h-3 w-3" /> Retour à la connexion
             </Link>
           </div>

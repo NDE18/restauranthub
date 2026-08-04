@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Eye, EyeOff, UserPlus } from 'lucide-react'
 import { apiClient } from '@/lib/api/client'
+import { AxiosError } from 'axios'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -36,8 +37,9 @@ export default function RegisterPage() {
         password: form.password,
       })
       router.push('/auth/connexion?registered=1')
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Une erreur est survenue.')
+    } catch (err) {
+      const axiosError = err as AxiosError<{ detail?: string }>
+      setError(axiosError.response?.data?.detail || 'Une erreur est survenue.')
     } finally {
       setLoading(false)
     }
