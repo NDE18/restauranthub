@@ -1,0 +1,19 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-delay-postgres
+  namespace: restaurant
+spec:
+  action: delay
+  mode: all
+  selector:
+    namespaces:
+      - restaurant
+    labelSelectors:
+      app: postgres-user
+  delay:
+    latency: "200ms"
+    jitter: "50ms"
+    correlation: "50"
+  duration: "2m"
+  direction: to

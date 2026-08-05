@@ -1,0 +1,25 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-labels
+  annotations:
+    policies.kyverno.io/description: "Les Deployments doivent avoir les labels app et version."
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: check-required-labels
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+              namespaces:
+                - restaurant
+      validate:
+        message: "Les Deployments doivent avoir les labels app et version"
+        pattern:
+          metadata:
+            labels:
+              app: "?*"
+              version: "?*"

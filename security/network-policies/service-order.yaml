@@ -1,0 +1,78 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: service-order-policy
+  namespace: restaurant
+spec:
+  podSelector:
+    matchLabels:
+      app: service-order
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Accepter le trafic depuis l'Ingress controller
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: 8080
+  egress:
+    # Vers PostgreSQL
+    - to:
+        - podSelector:
+            matchLabels:
+              app: postgres-order
+      ports:
+        - port: 5432
+    # Vers service-payment (saga)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: service-payment
+      ports:
+        - port: 8080
+    # Vers service-delivery (saga)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: service-delivery
+      ports:
+        - port: 3000
+    # Vers service-user (validation)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: service-user
+      ports:
+        - port: 8080
+    # Vers service-menu (validation)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: service-menu
+      ports:
+        - port: 3000
+    # Vers Redis
+    - to:
+        - podSelector:
+            matchLabels:
+              app: redis
+      ports:
+        - port: 6379
+    # Vers Kafka
+    - to:
+        - podSelector:
+            matchLabels:
+              app: kafka
+      ports:
+        - port: 29092
+    # DNS (CoreDNS)
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP

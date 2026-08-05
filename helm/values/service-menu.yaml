@@ -1,0 +1,51 @@
+name: service-menu
+
+image:
+  repository: service-menu
+  tag: latest
+
+containerPort: 3000
+service:
+  port: 3000
+
+env:
+  PORT: "3000"
+  KAFKA_BROKERS: "kafka:29092"
+
+envFromConfigMaps:
+  - common-config
+
+envFromSecrets:
+  - name: mongo-credentials
+    key: username
+    envVar: MONGO_USER
+  - name: mongo-credentials
+    key: password
+    envVar: MONGO_PASS
+  - name: redis-credentials
+    key: password
+    envVar: REDIS_PASSWORD
+
+probes:
+  startup:
+    enabled: true
+    path: /health
+    failureThreshold: 10
+    periodSeconds: 5
+  liveness:
+    enabled: true
+    path: /health
+    periodSeconds: 15
+    failureThreshold: 3
+  readiness:
+    enabled: true
+    path: /health
+    periodSeconds: 10
+    failureThreshold: 3
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi

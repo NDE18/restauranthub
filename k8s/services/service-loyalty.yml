@@ -105,8 +105,8 @@ spec:
     spec:
       containers:
         - name: service-loyalty
-          image: service-loyalty:latest
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/nde18/restauranthub/service-loyalty-7c7b59f75-gzrc9
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
               name: http
@@ -139,19 +139,19 @@ spec:
               memory: 512Mi
           startupProbe:
             httpGet:
-              path: /health
+              path: /actuator/health
               port: http
-            failureThreshold: 10
-            periodSeconds: 5
+            failureThreshold: 30
+            periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /health
+              path: /actuator/health/liveness
               port: http
             periodSeconds: 15
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /health
+              path: /actuator/health/readiness
               port: http
             periodSeconds: 10
             failureThreshold: 3

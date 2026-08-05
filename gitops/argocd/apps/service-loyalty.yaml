@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: service-loyalty
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: restauranthub
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: restauranthub
+
+  source:
+    repoURL: https://github.com/<user>/Restaurant.git
+    targetRevision: main
+    path: helm/charts/restaurant-service
+    helm:
+      valueFiles:
+        - ../../../helm/values/service-loyalty.yaml
+        - ../../../gitops/env/dev/service-loyalty.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: restaurant
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2

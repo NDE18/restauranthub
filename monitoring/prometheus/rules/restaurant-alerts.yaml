@@ -1,0 +1,78 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: restaurant-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: restaurant.availability
+      rules:
+        - alert: ServiceDown
+          expr: up{namespace="restaurant"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "{{ $labels.job }} est down"
+            description: "Le service {{ $labels.job }} ne repond plus depuis 1 minute."
+
+        - alert: PodCrashLooping
+          expr: rate(kube_pod_container_status_restarts_total{namespace="restaurant"}[5m]) > 0.1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.pod }} en crash loop"
+
+    - name: restaurant.latency
+      rules:
+        - alert: HighLatencyP95
+          expr: |
+            histogram_quantile(0.95,
+              sum(rate(http_server_requests_seconds_bucket{namespace="restaurant"}[5m])) by (le, service)
+            ) > 1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Latence P95 > 1s sur {{ $labels.service }}"
+
+    - name: restaurant.errors
+      rules:
+        - alert: HighErrorRate
+          expr: |
+            sum(rate(http_server_requests_seconds_count{namespace="restaurant",status=~"5.."}[5m])) by (service)
+            /
+            sum(rate(http_server_requests_seconds_count{namespace="restaurant"}[5m])) by (service)
+            > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Taux d'erreur > 5% sur {{ $labels.service }}"
+
+    - name: restaurant.saturation
+      rules:
+        - alert: HighMemoryUsage
+          expr: |
+            container_memory_working_set_bytes{namespace="restaurant"}
+            /
+            container_spec_memory_limit_bytes{namespace="restaurant"}
+            > 0.85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Memoire > 85% sur {{ $labels.pod }}"
+
+    - name: restaurant.kafka
+      rules:
+        - alert: KafkaConsumerLag
+          expr: kafka_consumer_group_lag > 1000
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Consumer lag > 1000 sur {{ $labels.topic }}"

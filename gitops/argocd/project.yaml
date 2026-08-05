@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: restauranthub
+  namespace: argocd
+spec:
+  description: Projet RestaurantHub — microservices platform
+
+  sourceRepos:
+    - '*'
+
+  destinations:
+    - namespace: restaurant
+      server: https://kubernetes.default.svc
+    - namespace: restaurant-staging
+      server: https://kubernetes.default.svc
+
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  orphanedResources:
+    warn: true

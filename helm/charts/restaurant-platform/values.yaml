@@ -1,0 +1,169 @@
+# Values du chart umbrella — chaque clé correspond a un alias de dependency
+
+service-user:
+  name: service-user
+  image:
+    repository: service-user
+    tag: latest
+  containerPort: 8080
+  service:
+    port: 8080
+  env:
+    SERVER_PORT: "8080"
+    DB_HOST: postgres-user
+    DB_PORT: "5432"
+    DB_NAME: user_db
+  envFromConfigMaps:
+    - common-config
+  envFromSecrets:
+    - name: postgres-credentials
+      key: username
+      envVar: DB_USER
+    - name: postgres-credentials
+      key: password
+      envVar: DB_PASSWORD
+    - name: redis-credentials
+      key: password
+      envVar: REDIS_PASSWORD
+  probes:
+    startup:
+      enabled: true
+      path: /actuator/health
+      failureThreshold: 30
+      periodSeconds: 10
+    liveness:
+      enabled: true
+      path: /actuator/health/liveness
+      periodSeconds: 15
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      path: /actuator/health/readiness
+      periodSeconds: 10
+      failureThreshold: 3
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      memory: 1Gi
+
+service-menu:
+  name: service-menu
+  image:
+    repository: service-menu
+    tag: latest
+  containerPort: 3000
+  service:
+    port: 3000
+  env:
+    PORT: "3000"
+    KAFKA_BROKERS: "kafka:29092"
+  envFromConfigMaps:
+    - common-config
+  envFromSecrets:
+    - name: mongo-credentials
+      key: username
+      envVar: MONGO_USER
+    - name: mongo-credentials
+      key: password
+      envVar: MONGO_PASS
+    - name: redis-credentials
+      key: password
+      envVar: REDIS_PASSWORD
+  probes:
+    startup:
+      enabled: true
+      path: /health
+      failureThreshold: 10
+      periodSeconds: 5
+    liveness:
+      enabled: true
+      path: /health
+      periodSeconds: 15
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      path: /health
+      periodSeconds: 10
+      failureThreshold: 3
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+service-loyalty:
+  name: service-loyalty
+  image:
+    repository: service-loyalty
+    tag: latest
+  containerPort: 8000
+  service:
+    port: 8000
+  env:
+    DATABASE_URL: "postgresql://postgres:postgres@postgres-loyalty:5432/loyalty_db"
+  envFromConfigMaps:
+    - common-config
+  envFromSecrets:
+    - name: redis-credentials
+      key: password
+      envVar: REDIS_PASSWORD
+  probes:
+    startup:
+      enabled: true
+      path: /health
+      failureThreshold: 10
+      periodSeconds: 5
+    liveness:
+      enabled: true
+      path: /health
+      periodSeconds: 15
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      path: /health
+      periodSeconds: 10
+      failureThreshold: 3
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+frontend:
+  name: frontend
+  image:
+    repository: frontend
+    tag: latest
+  containerPort: 3000
+  service:
+    port: 3000
+  env:
+    NEXTAUTH_URL: "http://restaurant.local"
+    NEXT_PUBLIC_API_URL: "http://restaurant.local"
+  envFromSecrets:
+    - name: frontend-secrets
+      key: nextauth-secret
+      envVar: NEXTAUTH_SECRET
+  probes:
+    startup:
+      enabled: false
+    liveness:
+      enabled: true
+      path: /
+      periodSeconds: 30
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      path: /
+      periodSeconds: 10
+      failureThreshold: 3
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi

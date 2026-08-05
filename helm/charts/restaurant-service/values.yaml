@@ -1,0 +1,74 @@
+name: ""
+replicas: 2
+
+image:
+  repository: ""
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+containerPort: 8080
+
+service:
+  type: ClusterIP
+  port: 8080
+
+env: {}
+envFromConfigMaps: []
+envFromSecrets: []
+# envFromSecrets format :
+#   - name: secret-name
+#     key: secret-key
+#     envVar: ENV_VAR_NAME
+
+configMap:
+  enabled: false
+  data: {}
+
+probes:
+  startup:
+    enabled: true
+    path: /actuator/health
+    failureThreshold: 30
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /actuator/health/liveness
+    periodSeconds: 15
+    failureThreshold: 3
+  readiness:
+    enabled: true
+    path: /actuator/health/readiness
+    periodSeconds: 10
+    failureThreshold: 3
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilization: 80
+
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+ingress:
+  enabled: false
+  className: nginx
+  annotations: {}
+  paths: []
+  # paths format :
+  #   - path: /api/v1/users
+  #     pathType: Prefix
+  host: ""
+
+labels: {}
+annotations: {}

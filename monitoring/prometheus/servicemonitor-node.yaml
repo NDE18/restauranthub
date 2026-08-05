@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: node-services
+  namespace: restaurant
+  labels:
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      stack: node
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

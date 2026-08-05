@@ -1,0 +1,190 @@
+# NetworkPolicies pour les composants d'infrastructure
+# Chaque base de données n'accepte que les connexions de son service
+
+---
+# PostgreSQL service-user
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgres-user-policy
+  namespace: restaurant
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres-user
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: service-user
+      ports:
+        - port: 5432
+---
+# PostgreSQL service-order
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgres-order-policy
+  namespace: restaurant
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres-order
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: service-order
+      ports:
+        - port: 5432
+---
+# PostgreSQL service-payment
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgres-payment-policy
+  namespace: restaurant
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres-payment
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: service-payment
+      ports:
+        - port: 5432
+---
+# PostgreSQL service-loyalty
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgres-loyalty-policy
+  namespace: restaurant
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres-loyalty
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: service-loyalty
+      ports:
+        - port: 5432
+---
+# MongoDB service-menu
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mongo-menu-policy
+  namespace: restaurant
+spec:
+  podSelector:
+    matchLabels:
+      app: mongo-menu
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: service-menu
+      ports:
+        - port: 27017
+---
+# Redis — accessible par plusieurs services
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: redis-policy
+  namespace: restaurant
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - service-user
+                  - service-menu
+                  - service-order
+                  - service-loyalty
+                  - service-payment
+                  - service-reservation
+                  - service-notification
+      ports:
+        - port: 6379
+---
+# Kafka — accessible par tous les services
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kafka-policy
+  namespace: restaurant
+spec:
+  podSelector:
+    matchLabels:
+      app: kafka
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - service-user
+                  - service-menu
+                  - service-order
+                  - service-loyalty
+                  - service-payment
+                  - service-delivery
+                  - service-reservation
+                  - service-notification
+                  - service-analytics
+      ports:
+        - port: 29092
+    # Zookeeper → Kafka
+    - from:
+        - podSelector:
+            matchLabels:
+              app: zookeeper
+      ports:
+        - port: 29092
+---
+# Zookeeper
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: zookeeper-policy
+  namespace: restaurant
+spec:
+  podSelector:
+    matchLabels:
+      app: zookeeper
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: kafka
+      ports:
+        - port: 2181

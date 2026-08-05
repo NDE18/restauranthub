@@ -1,0 +1,20 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: stress-service-order
+  namespace: restaurant
+spec:
+  mode: one
+  selector:
+    namespaces:
+      - restaurant
+    labelSelectors:
+      app: service-order
+  stressors:
+    cpu:
+      workers: 2
+      load: 80
+    memory:
+      workers: 1
+      size: "256Mi"
+  duration: "3m"

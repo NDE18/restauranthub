@@ -1,0 +1,44 @@
+name: service-loyalty
+
+image:
+  repository: service-loyalty
+  tag: latest
+
+containerPort: 8000
+service:
+  port: 8000
+
+env:
+  DATABASE_URL: "postgresql://postgres:postgres@postgres-loyalty:5432/loyalty_db"
+
+envFromConfigMaps:
+  - common-config
+
+envFromSecrets:
+  - name: redis-credentials
+    key: password
+    envVar: REDIS_PASSWORD
+
+probes:
+  startup:
+    enabled: true
+    path: /health
+    failureThreshold: 10
+    periodSeconds: 5
+  liveness:
+    enabled: true
+    path: /health
+    periodSeconds: 15
+    failureThreshold: 3
+  readiness:
+    enabled: true
+    path: /health
+    periodSeconds: 10
+    failureThreshold: 3
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi

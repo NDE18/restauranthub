@@ -1,0 +1,15 @@
+prometheus:
+  url: http://monitoring-kube-prometheus-prometheus.monitoring
+  port: 9090
+
+rules:
+  custom:
+    - seriesQuery: 'http_server_requests_seconds_count{namespace="restaurant"}'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          pod: {resource: "pod"}
+      name:
+        matches: "^(.*)_seconds_count$"
+        as: "${1}_per_second"
+      metricsQuery: 'rate(<<.Series>>{<<.LabelMatchers>>}[2m])'

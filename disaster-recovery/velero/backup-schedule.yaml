@@ -1,0 +1,22 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: restaurant-daily
+  namespace: velero
+spec:
+  schedule: "0 2 * * *"
+  template:
+    includedNamespaces:
+      - restaurant
+    includedResources:
+      - deployments
+      - services
+      - configmaps
+      - secrets
+      - persistentvolumeclaims
+      - statefulsets
+      - ingresses
+    snapshotVolumes: true
+    storageLocation: default
+    ttl: 720h
+    defaultVolumesToFsBackup: true
