@@ -33,6 +33,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug - Vérification package.json
+        run: |
+          echo "=== Branche actuelle ==="
+          echo "${{ github.ref }}"
+          echo ""
+          echo "=== Contenu de package.json ==="
+          cat package.json || echo "❌ package.json introuvable"
+          echo ""
+          echo "=== Scripts disponibles ==="
+          npm run || true
+          echo ""
+          echo "=== Arborescence ==="
+          ls -la
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
