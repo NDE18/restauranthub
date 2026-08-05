@@ -37,7 +37,7 @@ export class DeliveryController {
 
   @Patch(':id/location')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Mise à jour position livreur (GPS)' })
+  @ApiOperation({ summary: 'Mise à jour localisation livreur (GPS)' })
   updateLocation(
     @Param('id') id: string,
     @Body('lat') lat: number,

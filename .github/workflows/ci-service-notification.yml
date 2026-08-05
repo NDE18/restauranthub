@@ -4,11 +4,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'services/ci-service-notification/**'
+      - 'services/service-notification/**'
   pull_request:
     branches: [main]
     paths:
-      - 'services/ci-service-notification/**'
+      - 'services/service-notification/**'
 
 env:
   REGISTRY: ghcr.io
