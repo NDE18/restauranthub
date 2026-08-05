@@ -4,7 +4,7 @@ metadata:
   name: common-config
   namespace: restaurant
 data:
-  KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
   KEYCLOAK_ISSUER_URI: "http://keycloak:8080/realms/restaurant"

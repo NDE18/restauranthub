@@ -1,21 +1,21 @@
-apiVersion: v1
+apiVersion: v1 
 kind: ConfigMap
 metadata:
-  name: service-loyalty-config
+  name: service-analytics
   namespace: restaurant
 data:
-  DB_NAME: loyalty_db
+  DB_NAME: analytics_db
 ---
-# PostgreSQL pour service-loyalty
+# PostgreSQL pour service-analytics
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-loyalty
+  name: postgres-analytics
   namespace: restaurant
 spec:
   clusterIP: None
   selector:
-    app: postgres-loyalty
+    app: postgres-analytics
   ports:
     - port: 5432
       name: postgres
@@ -23,18 +23,18 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: postgres-loyalty
+  name: postgres-analytics
   namespace: restaurant
 spec:
-  serviceName: postgres-loyalty
+  serviceName: postgres-analytics
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-loyalty
+      app: postgres-analytics
   template:
     metadata:
       labels:
-        app: postgres-loyalty
+        app: postgres-analytics
     spec:
       containers:
         - name: postgres
@@ -43,8 +43,8 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: loyalty_db
-            - name: POSTGRES_USER
+              value: analytics_db
+            - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
@@ -69,29 +69,30 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 1Gi
+      volumeClaimTemplates:
+        - metadata:
+            name: data
+          spec:
+            storageClassName: local-path
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 1Gi
 ---
-# service-loyalty Deployment
+# service-analytics Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-loyalty
+  name: service-analytics
   namespace: restaurant
   labels:
-    app: service-loyalty
+    app: service-analytics
     version: v1
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: service-loyalty
+      app: service-analytics
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -100,12 +101,12 @@ spec:
   template:
     metadata:
       labels:
-        app: service-loyalty
+        app: service-analytics
         version: v1
     spec:
       containers:
-        - name: service-loyalty
-          image: ghcr.io/nde18/restauranthub/service-loyalty:latest
+        - name: service-analytics
+          image: ghcr.io/nde18/restauranthub/service-analytics:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
@@ -115,7 +116,7 @@ spec:
                 name: common-config
           env:
             - name: DATABASE_URL
-              value: "postgresql://$(DB_USER):$(DB_PASS)@postgres-loyalty:5432/loyalty_db"
+              value: "postgresql://$(DB_USER):$(DB_PASS)@postgres-analytics:5432/analytics_db"
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
@@ -145,13 +146,13 @@ spec:
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /actuator/health/liveness
+              path: /actuator/health
               port: http
             periodSeconds: 15
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /actuator/health/readiness
+              path: /actuator/health
               port: http
             periodSeconds: 10
             failureThreshold: 3
@@ -159,12 +160,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-loyalty
+  name: service-analytics
   namespace: restaurant
 spec:
   selector:
-    app: service-loyalty
-  ports:
-    - port: 8000
-      targetPort: http
-      name: http
+    matchLabels:
+      app: service-analytics
+    ports:
+      - port: 8000
+        targetPort: http
+        name: http        
