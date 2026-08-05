@@ -26,7 +26,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`service-menu démarré sur le port ${port}`);
+  console.log(`service-menu démarre sur le port ${port}`);
 }
 
 bootstrap();
