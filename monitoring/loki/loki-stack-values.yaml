@@ -1,0 +1,27 @@
+loki:
+  persistence:
+    enabled: true
+    size: 10Gi
+  config:
+    limits_config:
+      retention_period: 168h
+    table_manager:
+      retention_deletes_enabled: true
+      retention_period: 168h
+
+promtail:
+  config:
+    snippets:
+      pipelineStages:
+        - cri: {}
+        - json:
+            expressions:
+              level: level
+              service: service
+              traceId: traceId
+              message: message
+        - labels:
+            level:
+            service:
+        - output:
+            source: message

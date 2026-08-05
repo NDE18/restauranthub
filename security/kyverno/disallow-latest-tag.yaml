@@ -1,0 +1,24 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-latest-tag
+  annotations:
+    policies.kyverno.io/description: "Le tag latest est deconseille. Utiliser un tag SHA ou semver."
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: check-image-tag
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - restaurant
+      validate:
+        message: "Le tag ':latest' est deconseille. Utiliser un tag SHA ou semver."
+        pattern:
+          spec:
+            containers:
+              - image: "!*:latest"

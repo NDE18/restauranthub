@@ -1,0 +1,10 @@
+replicas: 1
+image:
+  tag: latest
+  pullPolicy: IfNotPresent
+resources:
+  requests:
+    cpu: 50m
+    memory: 256Mi
+  limits:
+    memory: 512Mi

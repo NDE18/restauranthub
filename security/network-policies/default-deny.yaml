@@ -1,0 +1,21 @@
+# Bloquer TOUT le trafic ingress par défaut
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: restaurant
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+---
+# Bloquer TOUT le trafic egress par défaut
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-egress
+  namespace: restaurant
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress

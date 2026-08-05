@@ -1,0 +1,108 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: service-user
+  namespace: restaurant
+  labels:
+    app: service-user
+    app.kubernetes.io/part-of: restauranthub
+spec:
+  replicas: 3
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: service-user
+  template:
+    metadata:
+      labels:
+        app: service-user
+    spec:
+      containers:
+        - name: service-user
+          image: service-user:latest
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: common-config
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: DB_HOST
+              value: postgres-user
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: user_db
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-credentials
+                  key: password
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            periodSeconds: 10
+  strategy:
+    blueGreen:
+      activeService: service-user
+      previewService: service-user-preview
+      autoPromotionEnabled: false
+      scaleDownDelaySeconds: 30
+---
+# Service actif (trafic production)
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-user
+  namespace: restaurant
+spec:
+  selector:
+    app: service-user
+  ports:
+    - port: 8080
+      targetPort: http
+      name: http
+---
+# Service preview (test de la nouvelle version)
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-user-preview
+  namespace: restaurant
+spec:
+  selector:
+    app: service-user
+  ports:
+    - port: 8080
+      targetPort: http
+      name: http

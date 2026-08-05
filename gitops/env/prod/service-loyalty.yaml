@@ -1,0 +1,15 @@
+replicas: 2
+image:
+  tag: sha-0000000
+  pullPolicy: Always
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    memory: 1Gi
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilization: 75

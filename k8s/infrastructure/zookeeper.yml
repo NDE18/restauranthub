@@ -42,21 +42,6 @@ spec:
             - name: log
               mountPath: /var/lib/zookeeper/log
 
-      securityContext:
-        fsGroup: 1000
-        runAsUser: 1000
-      initContainers:
-        - name: fix-permissions
-          image: busybox:latest
-          command: ["sh", "-c", "chown -R 1000:1000 /var/lib/zookeeper"]
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: data
-              mountPath: /var/lib/zookeeper/data
-            - name: log
-              mountPath: /var/lib/zookeeper/log
-
       containers:
         - name: zookeeper
           image: confluentinc/cp-zookeeper:7.6.0
@@ -70,8 +55,6 @@ spec:
               value: "2000"
             - name: ZOOKEEPER_SERVER_ID
               value: "1"
-            - name: ZOOKEEPER_SERVER_ID
-              value: "1"
           resources:
             requests:
               cpu: 100m
@@ -80,12 +63,7 @@ spec:
               memory: 512Mi
 
           # --- SONDES NATIVES TCP (100% fiables) ---
-
-          # --- SONDES NATIVES TCP (100% fiables) ---
           readinessProbe:
-            tcpSocket:
-              port: 2181
-            initialDelaySeconds: 10
             tcpSocket:
               port: 2181
             initialDelaySeconds: 10
@@ -96,18 +74,11 @@ spec:
               port: 2181
             initialDelaySeconds: 20
             periodSeconds: 15
-            tcpSocket:
-              port: 2181
-            initialDelaySeconds: 20
-            periodSeconds: 15
             timeoutSeconds: 5
-
 
           volumeMounts:
             - name: data
               mountPath: /var/lib/zookeeper/data
-            - name: log
-              mountPath: /var/lib/zookeeper/log
             - name: log
               mountPath: /var/lib/zookeeper/log
   volumeClaimTemplates:
@@ -123,18 +94,7 @@ spec:
         name: log
       spec:
         storageClassName: local-path
-        storageClassName: local-path
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 1Gi
-    - metadata:
-        name: log
-      spec:
-        storageClassName: local-path
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 1Gi
-
             storage: 1Gi

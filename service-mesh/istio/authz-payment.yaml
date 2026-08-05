@@ -1,0 +1,27 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: service-payment
+  namespace: restaurant
+spec:
+  selector:
+    matchLabels:
+      app: service-payment
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - "cluster.local/ns/restaurant/sa/service-order"
+      to:
+        - operation:
+            methods: ["POST"]
+            paths: ["/api/v1/payments"]
+    - from:
+        - source:
+            principals:
+              - "cluster.local/ns/restaurant/sa/service-order"
+      to:
+        - operation:
+            methods: ["GET"]
+            paths: ["/api/v1/payments/*"]

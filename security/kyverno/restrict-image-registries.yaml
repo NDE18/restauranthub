@@ -1,0 +1,24 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-registries
+  annotations:
+    policies.kyverno.io/description: "Les images doivent provenir de registries approuves."
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: validate-image-registry
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - restaurant
+      validate:
+        message: "Les images doivent provenir de ghcr.io ou des registries officiels"
+        pattern:
+          spec:
+            containers:
+              - image: "ghcr.io/* | docker.io/library/* | postgres:* | redis:* | mongo:* | confluentinc/* | node:* | python:* | eclipse-temurin:* | nginx:*"

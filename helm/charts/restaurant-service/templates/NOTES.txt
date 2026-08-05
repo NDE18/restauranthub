@@ -1,0 +1,17 @@
+RestaurantHub — {{ .Values.name }}
+===================================
+
+Service : {{ include "restaurant-service.fullname" . }}
+Namespace : {{ .Release.Namespace }}
+Replicas  : {{ .Values.replicas }}
+Image     : {{ .Values.image.repository }}:{{ .Values.image.tag }}
+Port      : {{ .Values.service.port }}
+
+Acces au service :
+  kubectl port-forward svc/{{ include "restaurant-service.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }} -n {{ .Release.Namespace }}
+
+{{- if .Values.ingress.enabled }}
+
+Ingress :
+  http://{{ .Values.ingress.host }}
+{{- end }}

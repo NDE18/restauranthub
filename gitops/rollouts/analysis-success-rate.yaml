@@ -1,0 +1,23 @@
+# AnalysisTemplate pour validation automatique du canary
+# Requiert Prometheus (Phase 6) pour fonctionner
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate
+  namespace: restaurant
+spec:
+  args:
+    - name: service-name
+  metrics:
+    - name: success-rate
+      interval: 30s
+      count: 5
+      successCondition: result[0] > 0.95
+      failureLimit: 2
+      provider:
+        prometheus:
+          address: http://prometheus-server.monitoring:9090
+          query: |
+            sum(rate(http_server_requests_seconds_count{service="{{args.service-name}}",status=~"2.."}[2m]))
+            /
+            sum(rate(http_server_requests_seconds_count{service="{{args.service-name}}"}[2m]))

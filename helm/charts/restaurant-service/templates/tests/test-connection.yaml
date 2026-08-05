@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "restaurant-service.fullname" . }}-test"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "restaurant-service.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  restartPolicy: Never
+  containers:
+    - name: wget
+      image: busybox:1.36
+      command: ['wget']
+      args: ['--timeout=5', '{{ include "restaurant-service.fullname" . }}:{{ .Values.service.port }}{{ .Values.probes.readiness.path }}']

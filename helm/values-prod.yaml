@@ -1,0 +1,18 @@
+# Overrides pour l'environnement de production
+replicas: 3
+
+image:
+  pullPolicy: Always
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    memory: 2Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilization: 70

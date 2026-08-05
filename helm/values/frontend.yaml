@@ -1,0 +1,49 @@
+name: frontend
+
+image:
+  repository: frontend
+  tag: latest
+
+containerPort: 3000
+service:
+  port: 3000
+
+env:
+  NEXTAUTH_URL: "http://restaurant.local"
+  NEXT_PUBLIC_API_URL: "http://restaurant.local"
+
+envFromSecrets:
+  - name: frontend-secrets
+    key: nextauth-secret
+    envVar: NEXTAUTH_SECRET
+
+probes:
+  startup:
+    enabled: false
+  liveness:
+    enabled: true
+    path: /
+    periodSeconds: 30
+    failureThreshold: 3
+  readiness:
+    enabled: true
+    path: /
+    periodSeconds: 10
+    failureThreshold: 3
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
+
+ingress:
+  enabled: true
+  className: nginx
+  host: restaurant.local
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+  paths:
+    - path: /
+      pathType: Prefix

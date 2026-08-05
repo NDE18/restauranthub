@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: service-delivery
+  namespace: restaurant
+  labels:
+    app: service-delivery
+automountServiceAccountToken: false

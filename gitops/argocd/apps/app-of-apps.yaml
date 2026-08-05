@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: restaurant-apps
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: restauranthub
+spec:
+  project: restauranthub
+
+  source:
+    repoURL: https://github.com/<user>/Restaurant.git
+    targetRevision: main
+    path: gitops/argocd/apps
+    directory:
+      exclude: 'app-of-apps.yaml'    # Ne pas se deployer soi-meme
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
