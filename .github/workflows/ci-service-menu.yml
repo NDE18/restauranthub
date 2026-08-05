@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
+    paths:
+      - 'services/ci-service-menu/**'
   pull_request:
-    branches: [main, develop]
+    branches: [main]
+    paths:
+      - 'services/ci-service-menu/**'
   workflow_dispatch:
 
 concurrency:
@@ -37,6 +41,14 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Debug package.json scripts
+        run: |
+          echo "=== Contenu de package.json ==="
+          cat package.json
+          echo ""
+          echo "=== Scripts détectés ==="
+          npm run
 
       - name: Lint
         run: npm run lint

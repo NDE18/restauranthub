@@ -58,7 +58,7 @@ USER nestjs
 
 EXPOSE 3000
 
-# Healthcheck (adjust path if your /health endpoint differs)
+# Healthchecks (adjust path if your /health endpoint differs)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/health || exit 1
 
