@@ -46,7 +46,7 @@ def get_dashboard(db: Session, restaurant_id: str, period: str) -> dict:
 
 
 def get_sales_analysis(db: Session, restaurant_id: str) -> dict:
-    """Analyse des ventes sur 30 jours."""
+    """Analyse des ventes des 30 derniers jours."""
     since = datetime.utcnow() - timedelta(days=30)
     events = db.query(OrderEvent).filter(
         OrderEvent.restaurant_id == restaurant_id,

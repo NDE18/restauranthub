@@ -2,12 +2,11 @@ name: CI — service-menu
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
     paths:
       - 'services/service-menu/**'
-      - '.github/workflows/**'
   pull_request:
-    branches: [main, develop]
+    branches: [main]
     paths:
       - 'services/service-menu/**'
   workflow_dispatch:
