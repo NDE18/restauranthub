@@ -10,7 +10,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('service-notification')
-    .setDescription('Emails, SMS, push et WebSocket')
+    .setDescription('Email, SMS, push et WebSocket')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
