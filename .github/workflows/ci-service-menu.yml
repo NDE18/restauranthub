@@ -1,14 +1,14 @@
-name: CI
+name: CI — service-menu
 
 on:
   push:
     branches: [main]
     paths:
-      - 'services/ci-service-menu/**'
+      - 'services/service-menu/**'
   pull_request:
     branches: [main]
     paths:
-      - 'services/ci-service-menu/**'
+      - 'services/service-menu/**'
   workflow_dispatch:
 
 concurrency:
