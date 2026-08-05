@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 from sqlalchemy.orm import Session
@@ -9,7 +9,7 @@ from app.db.models import OrderEvent
 def get_dashboard(db: Session, restaurant_id: str, period: str) -> dict:
     """KPI consolidés pour un établissement et une période."""
     days = {"day": 1, "week": 7, "month": 30}.get(period, 30)
-    since = datetime.utcnow() - timedelta(days=days)
+    since = datetime.now(timezone.utc) - timedelta(days=days)
 
     events = db.query(OrderEvent).filter(
         OrderEvent.restaurant_id == restaurant_id,
@@ -46,8 +46,8 @@ def get_dashboard(db: Session, restaurant_id: str, period: str) -> dict:
 
 
 def get_sales_analysis(db: Session, restaurant_id: str) -> dict:
-    """Analyse des ventes sur 30 jours."""
-    since = datetime.utcnow() - timedelta(days=30)
+    """Analyse des ventes des 30 derniers jours."""
+    since = datetime.now(timezone.utc) - timedelta(days=30)
     events = db.query(OrderEvent).filter(
         OrderEvent.restaurant_id == restaurant_id,
         OrderEvent.event_type == "order.paid",
