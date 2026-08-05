@@ -16,7 +16,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('service-menu')
-    .setDescription('Catalogue menus, plats et disponibilités temps réel')
+    .setDescription('Catalogue menus, plats et disponibilité temps réel')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
