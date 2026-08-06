@@ -1,21 +1,20 @@
-apiVersion: v1 
+apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: service-analytics
+  name: service-reservation-config
   namespace: restaurant
 data:
-  DB_NAME: analytics_db
+  DB_NAME: reservation_db
 ---
-# PostgreSQL pour service-analytics
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-analytics
+  name: postgres-reservation
   namespace: restaurant
 spec:
   clusterIP: None
   selector:
-    app: postgres-analytics
+    app: postgres-reservation
   ports:
     - port: 5432
       name: postgres
@@ -23,18 +22,18 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: postgres-analytics
+  name: postgres-reservation
   namespace: restaurant
 spec:
-  serviceName: postgres-analytics
+  serviceName: postgres-reservation
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-analytics
+      app: postgres-reservation
   template:
     metadata:
       labels:
-        app: postgres-analytics
+        app: postgres-reservation
     spec:
       containers:
         - name: postgres
@@ -43,7 +42,7 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: analytics_db
+              value: reservation_db
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
@@ -61,14 +60,14 @@ spec:
               cpu: 100m
               memory: 256Mi
             limits:
-              memory: 512Mi
+              memory: 256Mi
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", "postgres"]
             periodSeconds: 10
           volumeMounts:
             - name: data
-              mountPath: /var/lib/postgresql/data
+              path: /var/lib/postgresql/data
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -77,56 +76,57 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 1Gi
+            storage: 1Gi 
 ---
-# service-analytics Deployment
+# service-reservation Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-analytics
+  name: service-reservation
   namespace: restaurant
   labels:
-    app: service-analytics
+    app: service-reservation
     version: v1
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: service-analytics
+      app: service-reservation
   strategy:
-    type: RollingUpdate
+    type:  RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
   template:
     metadata:
       labels:
-        app: service-analytics
+        app: service-reservation 
         version: v1
     spec:
       containers:
-        - name: service-analytics
-          image: ghcr.io/nde18/restauranthub/service-analytics:latest
+        - name: service-reservation
+          image: ghcr.io/nde18/restauranthub/service-reservation:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8000
+            - containerPort: 8080
               name: http
           envFrom:
             - configMapRef:
                 name: common-config
           env:
-            - name: DATABASE_URL
-              value: "postgresql://$(DB_USER):$(DB_PASS)@postgres-analytics:5432/analytics_db"
+            - name: SERVER_PORT
+              value: "8080"
+            - name: DB_HOST
+              value: postgres-reservation
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: user_db
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
                   key: username
-            - name: DB_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: password
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -134,10 +134,10 @@ spec:
                   key: password
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
-            limits:
+              cpu: 250m
               memory: 512Mi
+            limits:
+              memory: 1Gi
           startupProbe:
             httpGet:
               path: /actuator/health
@@ -146,13 +146,13 @@ spec:
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/liveness
               port: http
-            periodSeconds: 15
-            failureThreshold: 3
+            failureThreshold: 15
+            periodSeconds: 3
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/readiness
               port: http
             periodSeconds: 10
             failureThreshold: 3
@@ -160,12 +160,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-analytics
+  name: service-reservation
   namespace: restaurant
 spec:
   selector:
-    app: service-analytics
+    app: service-reservation
   ports:
-    - port: 8000
+    - port: 8080
       targetPort: http
-      name: http        
+      name: http         
