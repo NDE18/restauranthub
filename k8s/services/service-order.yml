@@ -33,7 +33,7 @@ spec:
   template:
     metadata:
       labels:
-        app: postgres-order
+        app: service-order
     spec:
       containers:
         - name: postgres
@@ -46,13 +46,13 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  - name: postgres-credentials
-                    key: username
+                  name: postgres-credentials
+                  key: username
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  - name: postgres-credentials
-                    key: password
+                  name: postgres-credentials
+                  key: password
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           resources:
@@ -116,9 +116,11 @@ spec:
             - name: SERVER_PORT
               value: "8080"
             - name: DB_HOST
+              value: "postgres-order"
+            - name: DB_PORT
               value: "5432"
             - name: DB_NAME
-              value: user_db
+              value: order_db
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
