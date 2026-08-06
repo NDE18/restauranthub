@@ -121,12 +121,16 @@ spec:
             - name: DB_PORT
               value: "5432"
             - name: DB_NAME
-              value: user_db
+              value: reservation_db
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
                   key: username
+            - name: REDIS_HOST
+              value: redis
+            - name: REDIS_PORT
+              value: "6379"
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
