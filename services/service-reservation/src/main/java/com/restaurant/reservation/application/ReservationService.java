@@ -146,6 +146,6 @@ public class ReservationService {
     }
 
     public void toTry(){
-        log.info("Successful");
+        log.info("Success");
     }
 }

@@ -53,7 +53,7 @@ public class OrderController {
 
     @PostMapping("/{id}/cancel")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Annuler une commande")
+    @Operation(summary = "Cancel une commande")
     public void cancel(@PathVariable UUID id) {
         orderService.cancel(id);
     }
