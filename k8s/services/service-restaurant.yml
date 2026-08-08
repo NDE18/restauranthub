@@ -1,0 +1,170 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-restaurant
+  namespace: restaurant
+data:
+  DB_NAME: restaurant_db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-restaurant
+  namespace: restaurant
+spec:
+  clusterIP: None
+  selector:
+    app: service-restaurant
+  ports:
+    - port: 5432
+      name: postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-restaurant
+  namespace: restaurant
+spec:
+  serviceName: postgres-restaurant
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-restaurant
+  template:
+    metadata:
+      labels:
+        app: service-restaurant
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15-almine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: restaurant_db
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: username
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            periodSeconds: 10
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        storageClassName: local-path
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-restaurant
+  namespace: restaurant
+  labels:
+    app: service-restaurant
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service-restaurant
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnvailable: 0
+  template:
+    metadata:
+      labels:
+        app: service-restaurant
+        version: v1
+    spec:
+      containers:
+        - name: service-restaurant
+          image: ghcr.io/NDE18/restauranthub/service-restaurant:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: common-config
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: DB_HOST
+              value: "postgres-restaurant"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: restaurant_db
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-credentials
+                  key: password
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: htpp
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: htpp
+            periodSeconds: 10
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-restaurant
+  namespace: restaurant
+spec:
+  selector:
+    app: service-restaurant
+  ports:
+    - port: 8080
+      targetPort: htpp
+      name: http
