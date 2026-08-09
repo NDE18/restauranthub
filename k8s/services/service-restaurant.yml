@@ -145,7 +145,7 @@ spec:
           startupProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: htpp
+              port: http
             failureThreshold: 30
             periodSeconds: 10
           livenessProbe:
@@ -157,7 +157,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: htpp
+              port: http
             periodSeconds: 10
             failureThreshold: 3
 ---
@@ -171,5 +171,5 @@ spec:
     app: service-restaurant
   ports:
     - port: 8080
-      targetPort: htpp
+      targetPort: http
       name: http
