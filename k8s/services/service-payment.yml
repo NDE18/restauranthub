@@ -99,7 +99,7 @@ spec:
     spec:
       containers:
         - name: service-payment
-          image: ghcr.io/NDE18/restauranthub/service-payment:latest
+          image: ghcr.io/nde18/restauranthub/service-payment:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
