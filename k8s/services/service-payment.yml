@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:15-almine
+          image: postgres:15-alpine
           ports:
             - containerPort: 5432
           env:
@@ -48,6 +48,11 @@ spec:
                 secretKeyRef:
                   name: postgres-credentials
                   key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           resources:
@@ -82,7 +87,7 @@ metadata:
     app: service-payment
     version: v1
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: service-payment
@@ -90,7 +95,7 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
-      maxUnvailable: 0
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -99,7 +104,7 @@ spec:
     spec:
       containers:
         - name: service-payment
-          image: ghcr.io/NDE18/restauranthub/service-payment:latest
+          image: ghcr.io/nde18/restauranthub/service-payment:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -140,7 +145,7 @@ spec:
           startupProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: htpp
+              port: http
             failureThreshold: 30
             periodSeconds: 10
           livenessProbe:
@@ -152,7 +157,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: htpp
+              port: http
             periodSeconds: 10
             failureThreshold: 3
 ---
@@ -166,5 +171,5 @@ spec:
     app: service-payment
   ports:
     - port: 8080
-      targetPort: htpp
+      targetPort: http
       name: http
