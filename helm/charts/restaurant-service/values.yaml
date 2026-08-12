@@ -38,9 +38,9 @@ statefulSet:
   readinessProbe:
     exec:
       command:
-        - pg_isready
-        - -U
-        - postgres
+        - "pg_isready"
+        - "-U"
+        - "postgres"
     periodSeconds: 10
   volumeMounts:
     - name: data
