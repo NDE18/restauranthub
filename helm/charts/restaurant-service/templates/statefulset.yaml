@@ -37,10 +37,7 @@ spec:
                     resources:
                         {{- toYaml . | nindent 12 }}
                     {{- end }}
-                    readinessProbe:
-                        exec:
-                            command: {{ .Values.statefulSet.readinessProbe.exec.command }}
-                        periodSeconds: 10
+                    
     volumeClaimTemplates:
         -   metadata:
                 name: {{ .Values.volumeClaimTemplates.name }}
