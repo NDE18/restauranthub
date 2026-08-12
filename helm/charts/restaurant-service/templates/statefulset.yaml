@@ -39,8 +39,8 @@ spec:
                     {{- end }}
                     readinessProbe:
                         exec:
-                            command: ["pg_isready", "-U", "postgres"]
-                        periodSeconds: {{ .Values.statefulSet.readinessProbe.periodSeconds }}
+                            command: {{ .Values.statefulSet.readinessProbe.exec.command }}
+                        periodSeconds: 10
                     volumeMounts:
                         -   name: {{ .Values.statefulSet.volumeMounts.name }}
                             mountPath: {{ .Values.statefulSet.volumeMounts.mountPath }}
