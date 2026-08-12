@@ -40,10 +40,10 @@ spec:
                     readinessProbe:
                         exec:
                             command:
-                                {{- toYaml .Values.statefulSet.readinessProbe.exec.command | nindent 12 }}
+                                {{ toYaml .Values.statefulSet.readinessProbe.exec.command | nindent 8 }}
                         periodSeconds: {{ .Values.statefulSet.readinessProbe.periodSeconds }}
                     volumeMounts:
-                        {{- toYaml .Values.statefulSet.volumeMounts | nindent 12 }}
+                        {{ toYaml .Values.statefulSet.volumeMounts | nindent 4 }}
     volumeClaimTemplates:
         -   metadata:
                 name: {{ .Values.volumeClaimTemplates.name }}
