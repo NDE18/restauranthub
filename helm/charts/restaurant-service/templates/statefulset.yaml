@@ -40,7 +40,7 @@ spec:
                     readinessProbe:
                         exec:
                             command: {{ .Values.statefulSet.readinessProbe.exec.command }}
-                        periodSeconds: 10
+                        
                     volumeMounts:
                         -   name: {{ .Values.statefulSet.volumeMounts.name }}
                             mountPath: {{ .Values.statefulSet.volumeMounts.mountPath }}
