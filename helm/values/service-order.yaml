@@ -58,5 +58,5 @@ resources:
 
 statefulSet:
   env:
-    - POSTGRES_DB: order_db
-    - PGDATA: /var/lib/postgresql/data/pgdata
+    POSTGRES_DB: order_db
+    PGDATA: /var/lib/postgresql/data/pgdata
