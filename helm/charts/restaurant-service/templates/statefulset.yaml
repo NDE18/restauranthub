@@ -43,8 +43,7 @@ spec:
                                 {{- toYaml .Values.statefulSet.readinessProbe.exec.command | nindent 12 }}
                         periodSeconds: {{ .Values.statefulSet.readinessProbe.periodSeconds }}
                     volumeMounts:
-                        -   name: {{ .Values.statefulSet.volumeMounts.name }}
-                            mountPath: {{ .Values.statefulSet.volumeMounts.mountPath }}
+                        {{- toYaml .Values.statefulSet.volumeMounts | nindent 12 }}
     volumeClaimTemplates:
         -   metadata:
                 name: {{ .Values.volumeClaimTemplates.name }}

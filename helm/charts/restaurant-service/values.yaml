@@ -43,8 +43,8 @@ statefulSet:
         - postgres
     periodSeconds: 10
   volumeMounts:
-    name: data
-    mountPath: /var/lib/postgresql/data
+    - name: data
+      mountPath: /var/lib/postgresql/data
 
 volumeClaimTemplates:
   name: data
