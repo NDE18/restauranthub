@@ -37,7 +37,10 @@ statefulSet:
       memory: 512Mi
   readinessProbe:
     exec:
-      command: ["pg_isready", "-U", "postgres"]
+      command:
+        - pg_isready
+        - -U
+        - postgres
     periodSeconds: 10
   volumeMounts:
     name: data

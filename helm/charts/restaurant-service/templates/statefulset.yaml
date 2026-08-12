@@ -39,8 +39,12 @@ spec:
                     {{- end }}
                     readinessProbe:
                         exec:
-                            command: {{ .Values.statefulSet.readinessProbe.exec.command }}
-                        periodSeconds: 10
+                            command:
+                                {{- toYaml .Values.statefulSet.readinessProbe.exec.command | nindent 12 }}
+                        periodSeconds: {{ .Values.statefulSet.readinessProbe.periodSeconds }}
+                    volumeMounts:
+                        -   name: {{ .Values.statefulSet.volumeMounts.name }}
+                            mountPath: {{ .Values.statefulSet.volumeMounts.mountPath }}
     volumeClaimTemplates:
         -   metadata:
                 name: {{ .Values.volumeClaimTemplates.name }}
