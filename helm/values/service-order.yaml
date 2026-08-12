@@ -1,7 +1,7 @@
 name: service-order
 
 image:
-  repository: service-order
+  name: service-order
   tag: latest
 
 containerPort: 8080
