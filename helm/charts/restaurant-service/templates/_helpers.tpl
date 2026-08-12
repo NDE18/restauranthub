@@ -12,6 +12,7 @@ Nom complet du service : release-name
 {{- define "restaurant-service.statefulsetname" -}}
 {{- $name := include "restaurant-service.fullname" . -}}
 {{- printf "postgre%s" (substr 7 -1 $name) -}}
+{{- end }}
 
 {{/*
 Labels Kubernetes standards
