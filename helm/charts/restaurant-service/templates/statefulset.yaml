@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-    name: {{ include "restaurant-service.statefulsetname" }}
+    name: {{ include "restaurant-service.statefulsetname" . }}
     namespace: {{ .Release.Namespace }}
 spec:
-    serviceName: {{ include "restaurant-service.statefulsetname" }}
+    serviceName: {{ include "restaurant-service.statefulsetname" . }}
     replicas: {{ .Values.statefulSet.replicas }}
     selector:
         matchLabels:
-            app: {{ include "restaurant-service.fullname" }}
+            app: {{ include "restaurant-service.fullname" . }}
     template:
         metadata:
             labels:
-                app: {{ include "restaurant-service.fullname" }}
+                app: {{ include "restaurant-service.fullname" . }}
         spec:
             containers:
                 -   name: {{ .Values.statefulSet.countainers.name }}
