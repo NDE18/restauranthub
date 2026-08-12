@@ -1,0 +1,19 @@
+{{- if .Values.headlessService.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "restaurant-service.statefulsetname" }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "restaurant-service.fullname" }}
+
+spec:
+  clusterIP: None
+  ports:
+    - name: postgres
+      port: {{ .Values.headlessService.port }}
+      protocol: TCP
+
+  selector:
+    app: {{ include "restaurant-service.fullname" }}
+{{- end }}

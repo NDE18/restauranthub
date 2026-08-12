@@ -1,0 +1,53 @@
+name: service-restaurant
+
+image:
+  repository: service-restaurant
+  tag: latest
+
+containerPort: 8080
+service:
+  port: 8080
+
+env:
+  PORT: "8080"
+  DB_HOST: postgres-restaurant
+  DB_PORT: "5432"
+  DB_NAME: restaurant_db
+
+envFromConfigMaps:
+  - common-config
+
+envFromSecrets:
+  - name: postgres-credentials
+    key: username
+    envVar: DB_USER
+  - name: postgres-credentials
+    key: password
+    envVar: DB_PASSWORD
+  - name: redis-credentials
+    key: password
+    envVar: REDIS_PASSWORD
+
+probes:
+  startup:
+    enabled: true
+    path: /actuator/health
+    failureThreshold: 30
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /actuator/health/liveness
+    failureThreshold: 3
+    periodSeconds: 15
+  readiness:
+    enabled: true
+    path: /actuator/health/readiness
+    periodSeconds: 10
+    failureThreshold: 3
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    memory: 512Mi

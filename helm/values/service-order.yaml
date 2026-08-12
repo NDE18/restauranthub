@@ -1,0 +1,62 @@
+name: service-order
+
+image:
+  repository: service-order
+  tag: latest
+
+containerPort: 8080
+service:
+  port: 8080
+
+headlessService:
+  enabled: true
+  port: 5432
+
+env:
+  SERVER_PORT: "8080"
+  DB_HOST: postgres-order
+  DB_PORT: "5432"
+  DB_NAME: order_db
+
+envFromConfigMaps:
+  - common-config
+
+envFromSecrets:
+  - name: postgres-credentials
+    key: username
+    envVar: DB_USER
+  - name: postgres-credentials
+    key: password
+    envVar: DB_PASSWORD
+  - name: redis-credentials
+    key: password
+    envVar: REDIS_PASSWORD
+
+probes:
+  startup:
+    enabled: true
+    path: /actuator/health
+    failureThreshold: 30
+    periodSeconds: 10
+  liveness:
+    enabled: true
+    path: /actuator/health/liveness
+    periodSeconds: 15
+    failureThreshold: 3
+  readiness:
+    enabled: true
+    path: /actuator/health/readiness
+    periodSeconds: 10
+    failureThreshold: 3
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
+
+statefulSet:
+  env:
+    - POSTGRES_DB: order_db
+    - PGDATA: /var/lib/postgresql/data/pgdata
