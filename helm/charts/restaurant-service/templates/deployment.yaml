@@ -4,11 +4,7 @@ metadata:
   name: {{ include "restaurant-service.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "restaurant-service.labels" . | nindent 4 }}
-  {{- with .Values.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- include "restaurant-service.selectorLabels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicas }}
@@ -21,8 +17,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "restaurant-service.selectorLabels" . | nindent 8 }}
-        {{- include "restaurant-service.labels" . | nindent 8 }}
+        {{- include "restaurant-service.selectorLabels" . | nindent 8 }} 
     spec:
       containers:
         - name: {{ .Values.name }}

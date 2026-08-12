@@ -18,6 +18,11 @@ Nom complet du service : release-name
 Labels Kubernetes standards
 */}}
 {{- define "restaurant-service.labels" -}}
+app.kubernetes.io/name: {{ .Values.name }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/version: {{ .Values.image.tag | default "latest" | quote }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/part-of: restauranthub
 {{- with .Values.labels }}
 {{ toYaml . }}
 {{- end }}

@@ -4,7 +4,7 @@ metadata:
   name: {{ include "restaurant-service.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "restaurant-service.labels" . | nindent 4 }}
+    {{- include "restaurant-service.selectorLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   selector:
