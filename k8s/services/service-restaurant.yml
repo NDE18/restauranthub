@@ -144,7 +144,7 @@ spec:
               memory: 1Gi
           startupProbe:
             httpGet:
-              path: /actuator/health/liveness
+              path: /actuator/health
               port: http
             failureThreshold: 30
             periodSeconds: 10
