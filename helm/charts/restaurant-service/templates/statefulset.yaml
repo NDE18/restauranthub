@@ -35,15 +35,15 @@ spec:
                     {{- end }}
                     {{- with .Values.statefulSet.resources }}
                     resources:
-                        {{- toYaml . | nindent 12 }}
+                        {{- toYaml . | nindent 24 }}
                     {{- end }}
                     readinessProbe:
                         exec:
                             command:
-                                {{ toYaml .Values.statefulSet.readinessProbe.exec.command | nindent 32 }}
+                                {{- toYaml .Values.statefulSet.readinessProbe.exec.command | nindent 32 }}
                         periodSeconds: {{ .Values.statefulSet.readinessProbe.periodSeconds }}
                     volumeMounts:
-                        {{ toYaml .Values.statefulSet.volumeMounts | nindent 28 }}
+                        {{- toYaml .Values.statefulSet.volumeMounts | nindent 24 }}
     volumeClaimTemplates:
         -   metadata:
                 name: {{ .Values.volumeClaimTemplates.name }}
