@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "restaurant-service.statefulsetname" }}
+  name: {{ include "restaurant-service.statefulsetname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ include "restaurant-service.fullname" }}
+    app: {{ include "restaurant-service.fullname" . }}
 
 spec:
   clusterIP: None
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
 
   selector:
-    app: {{ include "restaurant-service.fullname" }}
+    app: {{ include "restaurant-service.fullname" . }}
 {{- end }}
