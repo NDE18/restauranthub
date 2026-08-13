@@ -13,7 +13,6 @@ spec:
     - name: postgres
       port: {{ .Values.headlessService.port }}
       protocol: TCP
-
   selector:
     app: {{ include "restaurant-service.statefulsetname" . }}
 {{- end }}
