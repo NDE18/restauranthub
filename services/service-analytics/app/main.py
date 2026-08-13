@@ -36,3 +36,11 @@ app.include_router(analytics_router.router, prefix="/api/v1/analytics")
 @app.get("/actuator/health")
 def health():
     return {"status": "UP"}
+
+@app.get("/actuator/health/liveness")
+def healthLiveness():
+    return {"status": "UP"}
+
+@app.get("/actuator/health/readiness")
+def healthReadiness():
+    return {"status": "UP"}

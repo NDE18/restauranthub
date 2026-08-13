@@ -42,3 +42,12 @@ resources:
     memory: 256Mi
   limits:
     memory: 512Mi
+
+headlessService:
+  enabled: true
+  port: 5432
+
+statefulSet:
+  env:
+    POSTGRES_DB: loyalty_db
+    PGDATA: /var/lib/postgresql/data/pgdata
