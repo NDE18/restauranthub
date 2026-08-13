@@ -8,10 +8,6 @@ containerPort: 8080
 service:
   port: 8080
 
-headlessService:
-  enabled: true
-  port: 5432
-
 env:
   SERVER_PORT: "8080"
   DB_HOST: postgres-order
@@ -55,6 +51,10 @@ resources:
     memory: 256Mi
   limits:
     memory: 512Mi
+
+headlessService:
+  enabled: true
+  port: 5432
 
 statefulSet:
   env:
