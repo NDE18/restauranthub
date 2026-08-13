@@ -40,8 +40,8 @@ app.include_router(loyalty_router.router, prefix="/api/v1/loyalty")
 def health():
     return {"status": "UP"}
 
-@app.getLiveness("/actuator/health/liveness")
-def health():
+@app.get("/actuator/health/liveness")
+def healthLiveness():
     return {"status": "UP"}
 
 @app.get("/actuator/health/readiness")
