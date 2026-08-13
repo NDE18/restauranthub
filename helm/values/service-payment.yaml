@@ -1,20 +1,29 @@
-name: service-loyalty
+name: service-payment
 
 image:
-  repository: service-loyalty
+  repository: service-payment
   tag: latest
 
-containerPort: 8000
+containerPort: 8080
 service:
-  port: 8000
+  port: 8080
 
 env:
-  DATABASE_URL: "postgresql://postgres:postgres@postgres-loyalty:5432/loyalty_db"
+  SERVER_PORT: "8080"
+  DB_HOST: postgres-payment
+  DB_PORT: "5432"
+  DB_NAME: payment_db
 
 envFromConfigMaps:
   - common-config
 
 envFromSecrets:
+  - name: postgres-credentials
+    key: username
+    envVar: DB_USER
+  - name: postgres-credentials
+    key: password
+    envVar: DB_PASSWORD
   - name: redis-credentials
     key: password
     envVar: REDIS_PASSWORD
@@ -38,16 +47,7 @@ probes:
 
 resources:
   requests:
-    cpu: 100m
+    cpu: 250m
     memory: 256Mi
   limits:
     memory: 512Mi
-
-headlessService:
-  enabled: true
-  port: 5432
-
-statefulSet:
-  env:
-    POSTGRES_DB: loyalty_db
-    PGDATA: /var/lib/postgresql/data/pgdata

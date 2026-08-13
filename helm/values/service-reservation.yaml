@@ -1,20 +1,29 @@
-name: service-loyalty
+name: service-reservation
 
 image:
-  repository: service-loyalty
+  repository: service-reservation
   tag: latest
 
-containerPort: 8000
+containerPort: 8080
 service:
-  port: 8000
+  port: 8080
 
 env:
-  DATABASE_URL: "postgresql://postgres:postgres@postgres-loyalty:5432/loyalty_db"
+  SERVER_PORT: "8080"
+  DB_HOST: postgres-reservation
+  DB_PORT: "5432"
+  DB_NAME: reservation_db
 
 envFromConfigMaps:
   - common-config
 
 envFromSecrets:
+  - name: postgres-credentials
+    key: username
+    envVar: DB_USER
+  - name: postgres-credentials
+    key: password
+    envVar: DB_PASSWORD
   - name: redis-credentials
     key: password
     envVar: REDIS_PASSWORD
@@ -38,7 +47,7 @@ probes:
 
 resources:
   requests:
-    cpu: 100m
+    cpu: 250m
     memory: 256Mi
   limits:
     memory: 512Mi
@@ -49,5 +58,5 @@ headlessService:
 
 statefulSet:
   env:
-    POSTGRES_DB: loyalty_db
+    POSTGRES_DB: reservation_db
     PGDATA: /var/lib/postgresql/data/pgdata

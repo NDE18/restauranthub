@@ -1,16 +1,57 @@
 name: ""
-replicas: 2
+replicas: 1
 
 image:
   repository: ""
-  tag: "latest"
-  pullPolicy: IfNotPresent
+  registry: ghcr.io/nde18/restauranthub/
+  tag: ""
+  pullPolicy: Always
 
 containerPort: 8080
 
 service:
   type: ClusterIP
   port: 8080
+
+headlessService:
+  port: 5432
+
+statefulSet:
+  replicas: 1
+  countainers:
+    name: postgres
+    image: postgres:15-alpine
+    containerPort: 5432
+  envFromSecrets:
+    - name: postgres-credentials
+      key: username
+      envVar: POSTGRES_USER
+    - name: postgres-credentials
+      key: password
+      envVar: POSTGRES_PASSWORD
+  env: {}
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+  readinessProbe:
+    exec:
+      command:
+        - "pg_isready"
+        - "-U"
+        - "postgres"
+    periodSeconds: 10
+  volumeMounts:
+    - name: data
+      mountPath: /var/lib/postgresql/data
+
+volumeClaimTemplates:
+  name: data
+  storageClassName: local-path
+  accessModes: ["ReadWriteOnce"]
+  storage: 1Gi
 
 env: {}
 envFromConfigMaps: []

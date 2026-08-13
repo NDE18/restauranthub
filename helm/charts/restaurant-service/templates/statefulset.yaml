@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: {{ include "restaurant-service.statefulsetname" . }}
+    namespace: {{ .Release.Namespace }}
+spec:
+    serviceName: {{ include "restaurant-service.statefulsetname" . }}
+    replicas: {{ .Values.statefulSet.replicas }}
+    selector:
+        matchLabels:
+            app: {{ include "restaurant-service.statefulsetname" . }}
+    template:
+        metadata:
+            labels:
+                app: {{ include "restaurant-service.statefulsetname" . }}
+        spec:
+            containers:
+                -   name: {{ .Values.statefulSet.countainers.name }}
+                    image: {{ .Values.statefulSet.countainers.image }}
+                    ports:
+                    -   containerPort: {{ .Values.statefulSet.countainers.containerPort }}
+                    {{- if or .Values.statefulSet.env .Values.statefulSet.envFromSecrets }}
+                    env:
+                        {{- range $key, $value := .Values.statefulSet.env }}
+                        -   name: {{ $key }}
+                            value: {{ $value | quote }}
+                        {{- end }}
+                        {{- range .Values.statefulSet.envFromSecrets }}
+                        -   name: {{ .envVar }}
+                            valueFrom:
+                                secretKeyRef:
+                                    name: {{ .name }}
+                                    key: {{ .key }}
+                        {{- end }}
+                    {{- end }}
+                    {{- with .Values.statefulSet.resources }}
+                    resources:
+                        {{- toYaml . | nindent 24 }}
+                    {{- end }}
+                    readinessProbe:
+                        exec:
+                            command:
+                                {{- toYaml .Values.statefulSet.readinessProbe.exec.command | nindent 32 }}
+                        periodSeconds: {{ .Values.statefulSet.readinessProbe.periodSeconds }}
+                    volumeMounts:
+                        {{- toYaml .Values.statefulSet.volumeMounts | nindent 24 }}
+    volumeClaimTemplates:
+        -   metadata:
+                name: {{ .Values.volumeClaimTemplates.name }}
+            spec:
+                storageClassName: {{ .Values.volumeClaimTemplates.storageClassName }}
+                accessModes: {{ .Values.volumeClaimTemplates.accessModes }}
+                resources:
+                    requests:
+                        storage: {{ .Values.volumeClaimTemplates.storage }}

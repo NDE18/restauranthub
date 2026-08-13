@@ -1,7 +1,7 @@
-name: service-loyalty
+name: service-analytics
 
 image:
-  repository: service-loyalty
+  repository: service-analytics
   tag: latest
 
 containerPort: 8000
@@ -9,7 +9,7 @@ service:
   port: 8000
 
 env:
-  DATABASE_URL: "postgresql://postgres:postgres@postgres-loyalty:5432/loyalty_db"
+  DATABASE_URL: "postgresql://postgres:postgres@postgres-analytics:5432/analytics_db"
 
 envFromConfigMaps:
   - common-config
@@ -22,17 +22,17 @@ envFromSecrets:
 probes:
   startup:
     enabled: true
-    path: /actuator/health
-    failureThreshold: 30
-    periodSeconds: 10
+    path: /health
+    failureThreshold: 10
+    periodSeconds: 5
   liveness:
     enabled: true
-    path: /actuator/health/liveness
+    path: /health
     periodSeconds: 15
     failureThreshold: 3
   readiness:
     enabled: true
-    path: /actuator/health/readiness
+    path: /health
     periodSeconds: 10
     failureThreshold: 3
 
@@ -42,12 +42,3 @@ resources:
     memory: 256Mi
   limits:
     memory: 512Mi
-
-headlessService:
-  enabled: true
-  port: 5432
-
-statefulSet:
-  env:
-    POSTGRES_DB: loyalty_db
-    PGDATA: /var/lib/postgresql/data/pgdata
