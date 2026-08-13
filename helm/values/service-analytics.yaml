@@ -49,5 +49,5 @@ headlessService:
 
 statefulSet:
   env:
-    POSTGRES_DB: loyalty_db
+    POSTGRES_DB: analytics_db
     PGDATA: /var/lib/postgresql/data/pgdata
