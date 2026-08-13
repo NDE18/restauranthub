@@ -22,17 +22,17 @@ envFromSecrets:
 probes:
   startup:
     enabled: true
-    path: /health
+    path: /actuator/health
     failureThreshold: 10
     periodSeconds: 5
   liveness:
     enabled: true
-    path: /health
+    path: /actuator/health/liveness
     periodSeconds: 15
     failureThreshold: 3
   readiness:
     enabled: true
-    path: /health
+    path: /actuator/health/readiness
     periodSeconds: 10
     failureThreshold: 3
 
