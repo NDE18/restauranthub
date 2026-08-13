@@ -8,11 +8,11 @@ spec:
     replicas: {{ .Values.statefulSet.replicas }}
     selector:
         matchLabels:
-            app: {{ include "restaurant-service.fullname" . }}
+            app: {{ include "restaurant-service.statefulsetname" . }}
     template:
         metadata:
             labels:
-                app: {{ include "restaurant-service.fullname" . }}
+                app: {{ include "restaurant-service.statefulsetname" . }}
         spec:
             containers:
                 -   name: {{ .Values.statefulSet.countainers.name }}
