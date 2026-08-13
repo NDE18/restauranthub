@@ -2,10 +2,11 @@ name: ""
 replicas: 1
 
 image:
-  repository: ghcr.io/nde18/restauranthub/
+  repository: ""
+  containerRegistry: ghcr.io/nde18/restauranthub/
   name: ""
   tag: ""
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 containerPort: 8080
 
