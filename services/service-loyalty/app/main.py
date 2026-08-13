@@ -41,9 +41,9 @@ def health():
     return {"status": "UP"}
 
 @app.get("/actuator/health/liveness")
-def health():
+def healthLiveness():
     return {"status": "UP"}
 
 @app.get("/actuator/health/readiness")
-def health():
+def healthReadiness():
     return {"status": "UP"}
