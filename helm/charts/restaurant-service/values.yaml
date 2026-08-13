@@ -3,8 +3,7 @@ replicas: 1
 
 image:
   repository: ""
-  containerRegistry: ghcr.io/nde18/restauranthub/
-  name: ""
+  registry: ghcr.io/nde18/restauranthub/
   tag: ""
   pullPolicy: Always
 
