@@ -5,7 +5,7 @@ metadata:
   name: {{ include "restaurant-service.statefulsetname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ include "restaurant-service.fullname" . }}
+    app: {{ include "restaurant-service.statefulsetname" . }}
 
 spec:
   clusterIP: None
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
 
   selector:
-    app: {{ include "restaurant-service.fullname" . }}
+    app: {{ include "restaurant-service.statefulsetname" . }}
 {{- end }}
