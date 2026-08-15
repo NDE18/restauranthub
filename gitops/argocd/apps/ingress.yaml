@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: argocd.fineegineering.tech
+    - host: argocd.fineengineering.tech
       http:
         paths:
           - path: /
