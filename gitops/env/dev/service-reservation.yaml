@@ -1,6 +1,6 @@
 replicas: 1
 image:
-  tag: latest
+  tag: sha-6c57f0e
   pullPolicy: IfNotPresent
 resources:
   requests:
