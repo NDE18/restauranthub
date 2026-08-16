@@ -1,6 +1,6 @@
 replicas: 1
 image:
-  tag: latest
+  tag: sha-ac24adc
   pullPolicy: IfNotPresent
 resources:
   requests:
