@@ -43,4 +43,4 @@ def healthLiveness():
 
 @app.get("/actuator/health/readiness")
 def healthReadiness():
-    return {"status": "UP"}
+    return {"status": "UP "}
