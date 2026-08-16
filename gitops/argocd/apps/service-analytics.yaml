@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: service-analytics
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: restauranthub
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: restauranthub
+
+  source:
+    repoURL: https://github.com/nde18/restauranthub.git
+    targetRevision: main
+    path: helm/charts/restaurant-service
+    helm:
+      valueFiles:
+        - ../../../helm/values/service-analytics.yaml
+        - ../../../gitops/env/dev/service-analytics.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: restaurant
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2
