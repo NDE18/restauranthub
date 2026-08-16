@@ -1,6 +1,6 @@
 replicas: 1
 image:
-  tag: sha-4e378c8
+  tag: sha-d9f324d
   pullPolicy: IfNotPresent
 resources:
   requests:
