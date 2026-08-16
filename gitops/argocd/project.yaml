@@ -7,7 +7,7 @@ spec:
   description: Projet RestaurantHub — microservices platform
 
   sourceRepos:
-    - '*'
+    - 'https://github.com/nde18/restauranthub.git'
 
   destinations:
     - namespace: restaurant
@@ -16,6 +16,10 @@ spec:
       server: https://kubernetes.default.svc
 
   clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  namespaceResourceWhitelist:
     - group: '*'
       kind: '*'
 
