@@ -11,7 +11,7 @@ spec:
   project: restauranthub
 
   source:
-    repoURL: https://github.com/<user>/Restaurant.git
+    repoURL: https://github.com/nde18/restauranthub.git
     targetRevision: main
     path: helm/charts/restaurant-service
     helm:
