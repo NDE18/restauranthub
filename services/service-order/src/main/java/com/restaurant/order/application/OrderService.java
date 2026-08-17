@@ -172,6 +172,6 @@ public class OrderService {
     }
 
     public void toTry(){
-        log.info("Success ");
+        log.info("Success");
     }
 }
