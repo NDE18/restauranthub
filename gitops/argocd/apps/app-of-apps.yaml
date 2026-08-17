@@ -16,11 +16,8 @@ spec:
       exclude: 'app-of-apps.yaml'    # Ne pas se deployer soi-meme
 
   destination:
-    - server: https://kubernetes.default.svc
-      namespace: argocd
-
-    - server: https://kubernetes.default.svc
-      namespace: restaurant
+    server: https://kubernetes.default.svc
+    namespace: argocd
 
   syncPolicy:
     automated:
